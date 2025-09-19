@@ -1,0 +1,11 @@
+﻿<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g opacity="0.45">
+    <circle cx="38" cy="46" r="14" fill="rgba(255,255,255,0.35)" />
+    <circle cx="180" cy="30" r="10" fill="rgba(244,181,197,0.3)" />
+    <circle cx="120" cy="80" r="12" fill="rgba(255,246,233,0.28)" />
+    <circle cx="60" cy="160" r="18" fill="rgba(15,163,177,0.25)" />
+    <circle cx="200" cy="150" r="11" fill="rgba(255,111,89,0.32)" />
+    <circle cx="40" cy="210" r="9" fill="rgba(255,246,233,0.2)" />
+    <circle cx="170" cy="210" r="7" fill="rgba(27,196,125,0.22)" />
+  </g>
+</svg>

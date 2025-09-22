@@ -70,7 +70,7 @@ export function AquariumPanel() {
         p2: r(2) * Math.PI * 2,
         p3: r(3) * Math.PI * 2,
         p4: r(4) * Math.PI * 2,
-        drift: (r(5) * 2 - 1) * 10, // px/s (-6 .. 6)
+        drift: (r(5) * 2 - 1) * 14, // px/s (-6 .. 6)
         face: r(6) > 0.5 ? 1 : -1,
       } as FishState;
     });
@@ -227,8 +227,6 @@ export function AquariumPanel() {
         role="img"
         aria-label="Tanque com peixes flutuando naturalmente, corais e bolhas"
       >
-        <div className="reef">🪸🌿</div>
-        <div className="reef r2">🪸🐚</div>
 
         {school.map((s) => (
           <button

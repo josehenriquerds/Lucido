@@ -31,30 +31,32 @@ export function Checkpoint({
     <Link
       href={href}
       className={clsx(
-        "flex h-full flex-col justify-between rounded-[28px] p-6 text-white shadow-[0_18px_32px_rgba(0,0,0,0.12)] transition-all",
-        "hover:-translate-y-1 hover:shadow-[0_24px_40px_rgba(0,0,0,0.16)]",
+        "relative flex min-h-[180px] w-full items-center overflow-hidden rounded-[28px] p-6 text-white",
+        "shadow-[0_18px_32px_rgba(0,0,0,0.12)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_40px_rgba(0,0,0,0.16)]",
         isLocked && "opacity-70 grayscale",
       )}
       style={{ background: accent }}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-2 text-left">
-          <span className="text-4xl" aria-hidden="true">
-            {icon}
-          </span>
-          <div>
-            <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-            <p className="text-sm text-white/80">{description}</p>
-          </div>
-        </div>
-        <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-          {stateLabel}
+      <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+        {stateLabel}
+      </span>
+
+      <div className="relative z-10 flex-1 pr-24">
+        <h3 className="font-chelsea text-3xl leading-tight tracking-tight text-white md:text-4xl">{title}</h3>
+        <p className="mt-2 max-w-[46ch] text-sm text-white/90 md:text-base">{description}</p>
+        <span className="mt-4 inline-flex items-center rounded-bubble bg-white px-4 py-2 text-sm font-semibold text-reef-shadow/90">
+          {isLocked ? "Desbloqueie missões anteriores" : "Entrar na missão"}
         </span>
       </div>
-      <div className="mt-6 flex items-center justify-between text-sm font-semibold text-white/90">
-        <span>{isLocked ? "Desbloqueie missões anteriores" : "Abrir missão"}</span>
-        <span aria-hidden="true">→</span>
-      </div>
+
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-2 right-2 z-0 select-none drop-shadow-lg"
+        style={{ fontSize: "7rem", lineHeight: 1 }}
+      >
+        {icon}
+      </span>
     </Link>
   );
 }
+

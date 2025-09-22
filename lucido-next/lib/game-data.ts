@@ -91,35 +91,35 @@ export const STORY_SCENES = [
   {
     id: "scene-a",
     illustration: "🐠",
-    text: "O peixinho-palhaço encontrou a letra A brilhando perto de um recife e viu uma abelha curiosa!",
+    text: "Ludo, o peixinho-palhaço, foi nadando a brincar; encontrou sua amiga ARRAIA — A de ARRAIA no mar! A de ÁGUA que espirra, A de ALGA a balançar; escolha a letra A para com Ludo rimar.",
     options: ["A", "E", "I"],
     answer: "A",
   },
   {
     id: "scene-e",
-    illustration: "🐬",
-    text: "Mais adiante, ele viu um elefante submarino ensinando a letra E para os amigos.",
+    illustration: "⭐",
+    text: "Mais adiante, brilhou uma ESTRELA-DO-MAR a sorrir; E de ESTRELA, E de ESPUMA — com E vamos seguir! No brilho das ondas, é fácil de lembrar: a palavra ESTRELA começa com E do mar.",
     options: ["O", "U", "E"],
     answer: "E",
   },
   {
     id: "scene-i",
-    illustration: "🐙",
-    text: "Perto de uma ilha de corais, a letra I apareceu dançando com uma família de iguanas do mar!",
+    illustration: "🦎",
+    text: "Perto da ilha de corais veio a IGUANA-MARINHA surgir; I de IGUANA, I de ILHA — com I vamos repetir! No ritmo das bolhas é doce de cantar: IGUANA começa com I, é só clicar.",
     options: ["I", "A", "O"],
     answer: "I",
   },
   {
     id: "scene-o",
-    illustration: "🐢",
-    text: "Um tubarão artista pintou a letra O dentro de uma bolha gigante!",
+    illustration: "🐋",
+    text: "De repente, salta a ORCA fazendo ondas abrir; O de ORCA, O de OCEANO — com O vamos aplaudir! O som redondinho faz o mar ecoar: ORCA começa com O, vamos marcar.",
     options: ["O", "E", "U"],
     answer: "O",
   },
   {
     id: "scene-u",
-    illustration: "🦑",
-    text: "Para terminar, um ouriço do oceano mostrou a letra U guardada em um tesouro submarino!",
+    illustration: "🦭",
+    text: "No fim da aventura, um URSO-MARINHO veio surgir; U de URSO-MARINHO, U de UM abraço — com U vamos concluir! No abraço do oceano, é bom recordar: URSO-MARINHO começa com U do mar.",
     options: ["U", "A", "I"],
     answer: "U",
   },
@@ -148,7 +148,8 @@ export const MODULES: {
   {
     id: "trail",
     name: "Recife Principal",
-    description: "Siga a trilha sugerida e desbloqueie habitats coloridos do fundo do mar.",
+    description:
+      "Siga a trilha sugerida e desbloqueie habitats coloridos do fundo do mar.",
     icon: "🪸",
     difficulty: "Iniciante",
     accent: "#2563EB",
@@ -188,7 +189,8 @@ export const MODULES: {
   {
     id: "spelling",
     name: "Laboratório do Som",
-    description: "Digite uma palavra, ouça a soletração e responda desafios sobre ela.",
+    description:
+      "Digite uma palavra, ouça a soletração e responda desafios sobre ela.",
     icon: "🔤",
     difficulty: "Intermediário",
     accent: "#6366F1",
@@ -199,7 +201,7 @@ export const MODULES: {
     description: "Marque sílabas sorteadas e complete o tabuleiro de corais.",
     icon: "🎲",
     difficulty: "Avançado",
-    accent: "#FACC15",
+    accent: "#ff305dff",
   },
   {
     id: "memory",
@@ -212,7 +214,8 @@ export const MODULES: {
   {
     id: "story",
     name: "História Submarina",
-    description: "Acompanhe o peixinho-palhaço em uma aventura narrativa interativa.",
+    description:
+      "Acompanhe o peixinho-palhaço em uma aventura narrativa interativa.",
     icon: "📖",
     difficulty: "Iniciante",
     accent: "#10B981",
@@ -268,4 +271,3 @@ export const BADGE_DEFINITIONS = [
     requirement: 1,
   },
 ] as const;
-

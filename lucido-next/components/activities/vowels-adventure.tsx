@@ -1,4 +1,4 @@
-ï»¿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 
@@ -35,8 +35,8 @@ function buildOption(params: {
   };
 }
 
-function createRound(): DragRound {
-  const vowel = VOWELS[Math.floor(Math.random() * VOWELS.length)];
+function createRound(vowelOverride?: (typeof VOWELS)[number]): DragRound {
+  const vowel = vowelOverride ?? VOWELS[Math.floor(Math.random() * VOWELS.length)];
   const correctList = VOWEL_TARGETS[vowel];
   const correct = correctList[Math.floor(Math.random() * correctList.length)];
 
@@ -72,7 +72,7 @@ function createRound(): DragRound {
 export function VowelsAdventure() {
   const { scores, addScore, recordModuleCompletion, narrate } = useGame();
   const [selected, setSelected] = useState<(typeof VOWELS)[number]>("A");
-  const [round, setRound] = useState<DragRound>(() => createRound());
+  const [round, setRound] = useState<DragRound>(() => createRound("A"));
 
   const exampleWords = useMemo(
     () =>
@@ -83,14 +83,7 @@ export function VowelsAdventure() {
     [],
   );
 
-  const handleSelect = (vowel: (typeof VOWELS)[number]) => {
-    setSelected(vowel);
-    addScore("vowels", 5, {
-      metric: "vowelMatches",
-      effect: "click",
-      speak: `Letra ${vowel}`,
-    });
-    narrate(`Excelente escolha! Vamos combinar a letra ${vowel} com a figura correta.`);
+  const handleSelect = (vowel: (typeof VOWELS)[number]) => { setSelected(vowel); setRound(createRound(vowel)); addScore("vowels", 5, { metric: "vowelMatches", effect: "click", speak: `Letra ${vowel}` }); narrate(`Excelente escolha! Vamos combinar a letra ${vowel} com a figura correta.`);
   };
 
   const handleDrop = (targetId: string, droppedVowel: string | null) => {
@@ -124,15 +117,15 @@ export function VowelsAdventure() {
   return (
     <div>
       <ActivityHeader
-        title="Vogais MÃ¡gicas"
-        subtitle="Pratique identificaÃ§Ã£o de vogais e faÃ§a combinaÃ§Ãµes com os habitantes do oceano."
+        title="Vogais Mágicas"
+        subtitle="Pratique identificação de vogais e faça combinações com os habitantes do oceano."
         moduleId="vowels"
-        icon="ðŸš"
+        icon="??"
         score={scores.vowels}
       />
 
       <ActivitySection>
-        <h2 className="mb-4 text-xl font-bold text-shell">Escolha uma letra</h2>
+        <h2 className="mb-4 text-2xl font-bold text-shell">Escolha uma letra</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {exampleWords.map(({ vowel, sample }) => (
             <button
@@ -150,22 +143,22 @@ export function VowelsAdventure() {
       </ActivitySection>
 
       <ActivitySection>
-        <h2 className="mb-4 text-xl font-bold text-shell">Arraste a letra atÃ© a figura certa</h2>
+        <h2 className="mb-4 text-2xl font-bold text-shell">Arraste a letra até a figura certa</h2>
         <div className="flex flex-col gap-6 md:flex-row">
-          <Card className="flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-6 text-center">
+          <Card className="flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-8 text-center">
             <span
               draggable
               onDragStart={(event) => {
                 event.dataTransfer?.setData("text/plain", round.vowel);
-                event.dataTransfer?.setDragImage(event.currentTarget, 30, 30);
+                event.dataTransfer?.setDragImage(event.currentTarget, 40, 40);
               }}
-              className="bubble-inset flex h-24 w-24 cursor-grab items-center justify-center rounded-3xl bg-white/20 text-5xl font-bold text-deep-blue shadow-lagoon"
+              className="bubble-inset flex h-28 w-28 cursor-grab items-center justify-center rounded-3xl bg-white/20 text-6xl font-bold text-deep-blue shadow-lagoon"
             >
               {round.vowel}
             </span>
-            <p className="text-sm text-reef-shell/70">TambÃ©m Ã© possÃ­vel tocar na figura para responder.</p>
+            <p className="text-sm text-reef-shell/70">Também é possível tocar na figura para responder.</p>
           </Card>
-          <div className="grid flex-1 gap-4 sm:grid-cols-3">
+          <div className="grid flex-1 gap-5 sm:grid-cols-3">
             {round.options.map((option) => (
               <div
                 key={option.id}
@@ -176,18 +169,18 @@ export function VowelsAdventure() {
                   handleDrop(option.id, data);
                 }}
                 onClick={() => handleDrop(option.id, round.vowel)}
-                className={`glass-card flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl p-4 text-center transition hover:-translate-y-1 ${
+                className={`glass-card flex cursor-pointer flex-col items-center justify-center gap-4 rounded-3xl p-6 text-center transition hover:-translate-y-1 ${
                   option.state === "correct"
-                    ? "bg-reef-algae/70 text-reef-shell"
+                    ? "bg-reef-algae/80 text-reef-shell scale-110"
                     : option.state === "incorrect"
-                      ? "bg-coral/80 text-shell"
+                      ? "bg-reef-coral/80 text-shell"
                       : ""
                 }`}
               >
-                <span className="text-4xl" aria-hidden="true">
+                <span className="text-5xl md:text-6xl\" aria-hidden="true">
                   {option.emoji}
                 </span>
-                <span className="text-lg font-semibold">{option.word}</span>
+                <span className="text-xl font-semibold">{option.word}</span>
               </div>
             ))}
           </div>
@@ -196,3 +189,5 @@ export function VowelsAdventure() {
     </div>
   );
 }
+
+

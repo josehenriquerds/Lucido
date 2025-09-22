@@ -80,7 +80,7 @@ export default function HomePage() {
 
       <section className="relative mt-6">
         <h2 className="mb-4 text-xl font-bold text-reef-shadow">Missões do recife</h2>
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-2">
           {AVAILABLE_MODULES.map((module) => {
             const completions = moduleProgress[module.id] ?? 0;
             const status = completions > 0 ? "completed" : "available";

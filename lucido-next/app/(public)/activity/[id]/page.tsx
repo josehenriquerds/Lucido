@@ -1,4 +1,4 @@
-﻿import ActivityClient from "./activity-client";
+import ActivityClient from "./activity-client-utf8";
 
 type ActivityParams = { id?: string | string[] };
 
@@ -16,3 +16,4 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
 
   return <ActivityClient id={idParam} />;
 }
+

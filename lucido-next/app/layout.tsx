@@ -5,16 +5,16 @@ import "./globals.css";
 
 
 export const metadata: Metadata = {
-  title: "Lucido Ocean Trail",
-  description: "Trilha lÃºdica de alfabetizaÃ§Ã£o em um recife cheio de descobertas.",
-  applicationName: "Lucido",
+  title: "Ludico ",
+  description: "Trilha da alfebetização em um recife cheio de descobertas.",
+  applicationName: "Ludico",
   keywords: [
-    "alfabetizaÃ§Ã£o",
-    "educaÃ§Ã£o",
+    "alfabetizaçao",
+    "educação",
     "jogos educativos",
     "vogais",
-    "sÃ­labas",
-    "soletraÃ§Ã£o",
+    "silabas",
+    "soletração",
   ],
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
           href="#conteudo"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-bubble focus:bg-reef-sand focus:px-4 focus:py-2 focus:text-reef-shadow"
         >
-          Ir para o conteÃºdo principal
+          Ir para o conteudo principal
         </a>
         <div id="sr-announce" aria-live="polite" className="sr-only" />
         <CursorAssist />

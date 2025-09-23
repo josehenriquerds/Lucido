@@ -30,7 +30,7 @@ export default function HomePage() {
   const { scores, moduleProgress, avatar, playerName, narrate, metrics, totalFish } = useGame();
 
   useEffect(() => {
-    narrate("O recife Lucido está pronto! Vamos resgatar peixinhos para o aquário?");
+    narrate("O recife Ludico está pronto! Vamos resgatar peixinhos para o aquário?");
   }, [narrate]);
 
   return (

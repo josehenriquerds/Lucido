@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Checkpoint } from "@/components/ui/checkpoint";
 import { PearlProgress } from "@/components/ui/pearl-progress";
 import { MODULES } from "@/lib/game-data";
+import { DailyShoalPanel } from "@/components/ui/daily-shoal-panel";
 
 type ScoreDisplayKey = "vowels" | "syllables" | "words" | "rhymes" | "spelling" | "bingo" | "memory";
 
@@ -55,7 +56,8 @@ export default function HomePage() {
             Ver aquário completo
           </Link>
         </div>
-        <PearlProgress currentFish={totalFish} goal={24} label="Cardume resgatado" />
+        {/* <PearlProgress currentFish={totalFish} goal={24} label="Cardume resgatado" /> */}
+        <DailyShoalPanel></DailyShoalPanel>
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">

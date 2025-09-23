@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useGame } from "@/components/game-provider";
 import { FishDefinition } from "@/lib/fish";
+import { DailyShoalPanel } from "@/components/ui/daily-shoal-panel";
 
 const DIFFICULTY_ORDER = { easy: 0, medium: 1, hard: 2 } as const;
 const DIFFICULTY_LABELS: Record<FishDefinition["difficulty"], string> = {
@@ -77,27 +78,11 @@ function seededRand(seed: number) {
 }
 
 export function AquariumPanel() {
-  const { aquarium, fishById, fishCatalog, dailyShoal } = useGame();
+  const { aquarium, fishById, fishCatalog } = useGame();
 
   const totalAvailable = fishCatalog.length;
   const totalRescued = aquarium.length;
 
-  const rescuedSet = useMemo(() => new Set(aquarium.map((fish) => fish.fishId)), [aquarium]);
-
-  const todayKey = dailyShoal.date;
-  const todayFishIds = useMemo(() => {
-    const set = new Set<string>();
-    aquarium.forEach((fish) => {
-      const acquiredDate = new Date(fish.earnedAt);
-      const key = `${acquiredDate.getFullYear()}-${String(acquiredDate.getMonth() + 1).padStart(2, "0")}-${String(
-        acquiredDate.getDate(),
-      ).padStart(2, "0")}`;
-      if (key === todayKey) {
-        set.add(fish.fishId);
-      }
-    });
-    return set;
-  }, [aquarium, todayKey]);
 
   const rescuedEntries = useMemo(() => {
     return aquarium
@@ -114,44 +99,7 @@ export function AquariumPanel() {
       });
   }, [aquarium, fishById]);
 
-  const groupedByDifficulty = useMemo(() => {
-    const groups: Record<FishDefinition["difficulty"], { entry: (typeof aquarium)[number]; definition: FishDefinition }[]> = {
-      easy: [],
-      medium: [],
-      hard: [],
-    };
-    rescuedEntries.forEach((item) => {
-      groups[item.definition.difficulty].push(item);
-    });
-    return groups;
-  }, [rescuedEntries]);
 
-  const dailyItems = useMemo(() => {
-    return dailyShoal.fishIds
-      .map((fishId, index) => {
-        const definition = fishById[fishId];
-        if (!definition) return null;
-        const isRescued = rescuedSet.has(fishId);
-        return {
-          fishId,
-          definition,
-          index,
-          isRescued,
-          isNew: isRescued && todayFishIds.has(fishId),
-        };
-      })
-      .filter(
-        (item): item is {
-          fishId: string;
-          definition: FishDefinition;
-          index: number;
-          isRescued: boolean;
-          isNew: boolean;
-        } => Boolean(item),
-      );
-  }, [dailyShoal.fishIds, fishById, rescuedSet, todayFishIds]);
-
-  const dailyRescuedCount = dailyItems.filter((item) => item.isRescued).length;
 
   const [viewMode, setViewMode] = useState<"grid" | "panorama">("panorama");
   const [theme, setTheme] = useState<ThemeId>("reef");
@@ -313,10 +261,6 @@ if (button) {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 text-4xl shadow-inner shadow-black/20">
               ??
             </div>
-            <div className="min-w-[120px]">
-              <p className="text-xs uppercase tracking-wide text-white/70">Cardume de hoje</p>
-              <p className="text-xl font-bold text-white">{dailyRescuedCount} / {dailyItems.length}</p>
-            </div>
           </div>
         </div>
         <div className="mt-6">
@@ -332,38 +276,6 @@ if (button) {
         </div>
       </header>
 
-      <section className="mt-8 rounded-3xl border border-white/14 bg-white/80 p-5 shadow-[0_12px_24px_rgba(15,23,42,0.08)] backdrop-blur">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h3 className="text-xl font-semibold text-reef-shadow">Cardume do dia</h3>
-            <p className="text-sm text-reef-shadow/70">
-              Dois brincalhÃµes, seis exploradores e dois desafiadores para completar o set diÃ¡rio.
-            </p>
-          </div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-reef-sand/10 px-4 py-2 text-sm font-semibold text-reef-shadow">
-            <span className="text-base">??</span> {dailyRescuedCount} de {dailyItems.length}
-          </span>
-        </div>
-
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {dailyItems.map(({ fishId, definition, isRescued, isNew }) => (
-            <button
-              key={fishId}
-              type="button"
-              className={`daily-card ${isRescued ? "daily-card--rescued" : "daily-card--shadow"}`}
-              onClick={() => setSelectedFishId(definition.id)}
-            >
-              <span className="daily-card__emoji" aria-hidden="true">
-                {definition.emoji}
-              </span>
-              <span className="daily-card__name">{definition.name}</span>
-              <span className="daily-card__difficulty">{DIFFICULTY_LABELS[definition.difficulty]}</span>
-              {isNew && <span className="daily-card__badge">NOVO</span>}
-              {!isRescued && <span className="sr-only">Ainda nÃ£o resgatado</span>}
-            </button>
-          ))}
-        </div>
-      </section>
 
       <section className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-2">
@@ -406,43 +318,13 @@ if (button) {
       </section>
 
       {viewMode === "grid" ? (
-        <section className="mt-6 space-y-6">
-          {(Object.keys(groupedByDifficulty) as FishDefinition["difficulty"][]).map((level) => {
-            const group = groupedByDifficulty[level];
-            if (group.length === 0) return null;
-            return (
-              <div key={level} className="rounded-3xl border border-white/18 bg-white/90 p-5 shadow-[0_14px_28px_rgba(15,23,42,0.08)]">
-                <div className="mb-4 flex items-center justify-between">
-                  <h4 className="text-lg font-semibold text-reef-shadow">{DIFFICULTY_LABELS[level]}</h4>
-                  <span className="text-sm font-semibold text-reef-shadow/60">{group.length} peixinhos</span>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {group.map(({ entry, definition }) => (
-                    <button
-                      key={entry.id}
-                      type="button"
-                      className="fish-card"
-                      onClick={() => setSelectedFishId(definition.id)}
-                    >
-                      <span className="fish-card__emoji" aria-hidden="true">
-                        {definition.emoji}
-                      </span>
-                      <div className="fish-card__body">
-                        <p className="fish-card__name">{definition.name}</p>
-                        <p className="fish-card__fact">{definition.fact}</p>
-                      </div>
-                      {todayFishIds.has(entry.fishId) && <span className="fish-card__badge">NOVO HOJE</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-          {rescuedEntries.length === 0 && (
-            <div className="rounded-3xl border border-dashed border-reef-sand/40 bg-white/70 p-6 text-center text-sm text-reef-shadow/70">
-              Nenhum peixe resgatado ainda. Complete uma missão para colocar o primeiro habitante no aquário!
-            </div>
-          )}
+        <section className="mt-6">
+          <DailyShoalPanel
+            variant="full"
+            onFishClick={(fishId) => setSelectedFishId(fishId)}
+            showProgress
+            showDescription
+          />
         </section>
       ) : (
         <section className="mt-6">
@@ -536,68 +418,7 @@ if (button) {
           pointer-events: none;
         }
 
-        .daily-card {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.35rem;
-          padding: 1rem;
-          border-radius: 20px;
-          border: 1px solid rgba(15, 23, 42, 0.08);
-          background: rgba(255, 255, 255, 0.92);
-          text-align: left;
-          min-height: 140px;
-          transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-        }
-        .daily-card:hover,
-        .daily-card:focus-visible {
-          transform: translateY(-4px);
-          border-color: rgba(37, 99, 235, 0.3);
-          box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
-        }
-        .daily-card--shadow {
-          background: rgba(241, 245, 249, 0.9);
-          border-style: dashed;
-          color: rgba(30, 41, 59, 0.5);
-        }
-        .daily-card__emoji {
-          font-size: 2rem;
-          line-height: 1;
-        }
-        .daily-card--shadow .daily-card__emoji {
-          filter: grayscale(1);
-          opacity: 0.32;
-        }
-        .daily-card__name {
-          font-size: 1rem;
-          font-weight: 600;
-          color: rgba(15, 23, 42, 0.92);
-        }
-        .daily-card--shadow .daily-card__name {
-          color: rgba(15, 23, 42, 0.56);
-        }
-        .daily-card__difficulty {
-          font-size: 0.7rem;
-          font-weight: 600;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: rgba(15, 23, 42, 0.45);
-        }
-        .daily-card__badge {
-          position: absolute;
-          top: 0.75rem;
-          right: 0.75rem;
-          border-radius: 999px;
-          background: rgba(59, 130, 246, 0.9);
-          color: #fff;
-          font-size: 0.65rem;
-          font-weight: 700;
-          letter-spacing: 0.14em;
-          padding: 0.2rem 0.5rem;
-        }
-
-        .view-toggle {
+.view-toggle {
           padding: 0.35rem 0.9rem;
           font-size: 0.8rem;
           font-weight: 600;

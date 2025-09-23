@@ -6,6 +6,9 @@ import { ActivityHeader, ActivitySection } from "@/components/activities/activit
 import { useGame } from "@/components/game-provider";
 import { BubbleOption } from "@/components/ui/bubble-option";
 import { Card } from "@/components/ui/card";
+import { SyllableCard } from "@/components/ui/syllable-card";
+import { LetterCard } from "@/components/ui/letter-card";
+import { MessageCircle } from "lucide-react";
 import { SYLLABLES } from "@/lib/game-data";
 
 function randomSyllable() {
@@ -79,42 +82,61 @@ export function SyllablesAdventure() {
         title="Sílabas Borbulhantes"
         subtitle="Monte sílabas arrastando letras brilhantes." 
         moduleId="syllables"
-        icon="💬"
+        icon={<MessageCircle className="w-6 h-6" />}
         score={scores.syllables}
       />
 
       <ActivitySection>
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-wide text-reef-shell/70">Monte a sílaba</p>
-            <h2 className="text-3xl font-bold text-shell">{target}</h2>
+        <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+          <div className="text-center md:text-left">
+            <p className="text-sm uppercase tracking-wide text-reef-shadow/60 mb-4">Monte a sílaba</p>
+            <SyllableCard
+              syllable={target}
+              isPrimary
+              className="w-40 h-40 mx-auto md:mx-0"
+            />
           </div>
-          <div className="flex items-center gap-3">
-            {slots.map((slot, index) => (
-              <span
-                key={index}
-                className={`flex h-20 w-20 items-center justify-center rounded-3xl bg-shell/80 text-3xl font-bold text-deep-blue shadow-inner ${
-                  slot ? "ring-4 ring-lagoon" : ""
-                }`}
-              >
-                {slot ?? "?"}
-              </span>
-            ))}
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-sm text-reef-shadow/70">Arraste as letras aqui</p>
+            <div className="flex items-center gap-3">
+              {slots.map((slot, index) => (
+                <div
+                  key={index}
+                  className={`relative flex h-20 w-20 items-center justify-center rounded-2xl bg-white border-2 border-dashed border-gray-300 text-2xl font-bold shadow-inner transition-all duration-200 ${
+                    slot ? "border-green-500 bg-green-50" : "border-gray-300"
+                  }`}
+                >
+                  {slot ? (
+                    <LetterCard
+                      value={slot}
+                      className="w-16 h-16 !p-1"
+                      showHelperImage={false}
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-3xl">?</span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <Card className="mt-6 flex flex-wrap gap-3 bg-white/12 p-4">
-          {letters.map((letter) => (
-            <BubbleOption
-              key={letter}
-              onClick={() => fillSlot(letter)}
-              disabled={usedLetters.has(letter)}
-              className="min-w-[64px] justify-center text-2xl"
-            >
-              {letter}
-            </BubbleOption>
-          ))}
-        </Card>
+        <div className="mt-8">
+          <p className="text-sm text-reef-shadow/70 mb-4 text-center">Escolha as letras</p>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            {letters.map((letter) => (
+              <LetterCard
+                key={letter}
+                value={letter}
+                asButton
+                onClick={() => fillSlot(letter)}
+                disabled={usedLetters.has(letter)}
+                className={`w-20 h-20 ${usedLetters.has(letter) ? "opacity-50 pointer-events-none" : ""}`}
+                showHelperImage={false}
+              />
+            ))}
+          </div>
+        </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
           <BubbleOption onClick={checkAnswer} state={feedback === "correct" ? "correct" : "idle"}>

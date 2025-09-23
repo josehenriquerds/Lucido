@@ -308,7 +308,7 @@ export function MemoryAdventure() {
                 key={card.id}
                 onClick={() => handleFlip(card.id)}
                 disabled={(isResolving && !isActive) || card.isFiller}
-                className={`relative h-24 sm:h-28 md:h-32 w-full transition-transform duration-300 hover:-translate-y-1 disabled:cursor-not-allowed ${baseRing}`}
+                className={`relative h-6 sm:h-6 md:h-6 w-full transition-transform duration-300 hover:-translate-y-1 disabled:cursor-not-allowed ${baseRing}`}
                 style={{  borderRadius: 18 }}
                 aria-pressed={isActive}
                 aria-label={card.isFiller ? "Carta especial" : `Carta ${card.id}`}

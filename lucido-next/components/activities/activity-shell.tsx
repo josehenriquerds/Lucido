@@ -13,16 +13,20 @@ export function ActivityHeader({
   title: string;
   subtitle: string;
   moduleId: string;
-  icon: string;
+  icon: string | ReactNode;
   score: number;
 }) {
   return (
     <Card variant="reef" className="mb-6 flex flex-col gap-4 p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-4xl" aria-hidden="true">
-            {icon}
-          </span>
+          <div className="flex items-center justify-center w-12 h-12" aria-hidden="true">
+            {typeof icon === 'string' ? (
+              <span className="text-4xl">{icon}</span>
+            ) : (
+              icon
+            )}
+          </div>
           <div>
             <h1 className="text-2xl font-bold text-reef-shell">{title}</h1>
             <p className="text-sm text-reef-shell/80">{subtitle}</p>

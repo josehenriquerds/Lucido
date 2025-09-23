@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { ActivityHeader, ActivitySection } from "@/components/activities/activity-shell";
 import { useGame } from "@/components/game-provider";
 import { Card } from "@/components/ui/card";
+import { LetterCard } from "@/components/ui/letter-card";
+import { Sparkles } from "lucide-react";
 import { VOWEL_TARGETS } from "@/lib/game-data";
 
 const VOWELS = Object.keys(VOWEL_TARGETS) as (keyof typeof VOWEL_TARGETS)[];
@@ -117,46 +119,59 @@ export function VowelsAdventure() {
   return (
     <div>
       <ActivityHeader
-        title="Vogais Mágicas"
-        subtitle="Pratique identificação de vogais e faça combinações com os habitantes do oceano."
+        title="Vogais Mï¿½gicas"
+        subtitle="Pratique identificaï¿½ï¿½o de vogais e faï¿½a combinaï¿½ï¿½es com os habitantes do oceano."
         moduleId="vowels"
-        icon="??"
+        icon={<Sparkles className="w-6 h-6" />}
         score={scores.vowels}
       />
 
       <ActivitySection>
-        <h2 className="mb-4 text-2xl font-bold text-shell">Escolha uma letra</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-reef-shadow mb-2">Escolha uma letra</h2>
+          <p className="text-sm text-reef-shadow/70">Toque em uma vogal para praticar</p>
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
           {exampleWords.map(({ vowel, sample }) => (
-            <button
-              key={vowel}
-              onClick={() => handleSelect(vowel)}
-              className={`glass-card flex flex-col items-center justify-center gap-3 rounded-3xl p-5 text-3xl transition hover:-translate-y-1 hover:shadow-lg ${
-                selected === vowel ? "ring-4 ring-seafoam" : ""
-              }`}
-            >
-              <span className="text-4xl font-bold text-deep-blue">{vowel}</span>
-              <span className="text-xs uppercase tracking-wide text-reef-shell/70">{sample}</span>
-            </button>
+            <div key={vowel} className="relative">
+              <LetterCard
+                value={vowel}
+                asButton
+                onClick={() => handleSelect(vowel)}
+                pressed={selected === vowel}
+                className={selected === vowel ? "ring-4 ring-blue-500/70 ring-offset-2" : ""}
+              >
+                <p className="mt-2 text-xs uppercase tracking-wide text-reef-shadow/60 text-center">
+                  {sample}
+                </p>
+              </LetterCard>
+            </div>
           ))}
         </div>
       </ActivitySection>
 
       <ActivitySection>
-        <h2 className="mb-4 text-2xl font-bold text-shell">Arraste a letra até a figura certa</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-reef-shadow mb-2">Encontre a figura que combina</h2>
+          <p className="text-sm text-reef-shadow/70">Arraste a letra ou toque na figura correta</p>
+        </div>
         <div className="flex flex-col gap-6 md:flex-row">
-          <Card className="flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-8 text-center">
-            <span
+          <Card className="flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-6 text-center">
+            <div
               draggable
               onDragStart={(event) => {
                 event.dataTransfer?.setData("text/plain", round.vowel);
-                event.dataTransfer?.setDragImage(event.currentTarget, 40, 40);
+                event.dataTransfer?.setDragImage(event.currentTarget, 60, 60);
               }}
-              className="bubble-inset flex h-28 w-28 cursor-grab items-center justify-center rounded-3xl bg-white/20 text-6xl font-bold text-deep-blue shadow-lagoon"
+              className="cursor-grab active:cursor-grabbing"
             >
-              {round.vowel}
-            </span>
-            <p className="text-sm text-reef-shell/70">Também é possível tocar na figura para responder.</p>
+              <LetterCard
+                value={round.vowel}
+                emphasized
+                className="w-32 h-32"
+              />
+            </div>
+            <p className="text-sm text-reef-shadow/60">Arraste ou toque na figura</p>
           </Card>
           <div className="grid flex-1 gap-5 sm:grid-cols-3">
             {round.options.map((option) => (
@@ -169,18 +184,18 @@ export function VowelsAdventure() {
                   handleDrop(option.id, data);
                 }}
                 onClick={() => handleDrop(option.id, round.vowel)}
-                className={`glass-card flex cursor-pointer flex-col items-center justify-center gap-4 rounded-3xl p-6 text-center transition hover:-translate-y-1 ${
+                className={`glass-card flex cursor-pointer flex-col items-center justify-center gap-4 rounded-3xl p-6 text-center transition-all duration-300 hover:-translate-y-1 min-h-[160px] ${
                   option.state === "correct"
-                    ? "bg-reef-algae/80 text-reef-shell scale-110"
+                    ? "bg-green-100 border-green-500 border-2 scale-105 shadow-lg"
                     : option.state === "incorrect"
-                      ? "bg-reef-coral/80 text-shell"
-                      : ""
+                      ? "bg-red-100 border-red-500 border-2 opacity-75"
+                      : "hover:shadow-lg"
                 }`}
               >
-                <span className="text-5xl md:text-6xl\" aria-hidden="true">
+                <span className="text-5xl md:text-6xl transition-transform duration-300" aria-hidden="true">
                   {option.emoji}
                 </span>
-                <span className="text-xl font-semibold">{option.word}</span>
+                <span className="text-lg font-semibold text-reef-shadow">{option.word}</span>
               </div>
             ))}
           </div>

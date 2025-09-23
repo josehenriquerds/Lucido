@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { href: "/modules", label: "Missões", icon: "🐙" },
   { href: "/leaderboard", label: "Cardume", icon: "🐟" },
   { href: "/profile", label: "Aquário", icon: "🐠" },
-  { href: "/settings", label: "Concha", icon: "⚙️" },
+  { href: "/settings", label: "Concha", icon: "🐚" },
 ] as const;
 
 export function Navbar() {

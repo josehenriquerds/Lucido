@@ -33,15 +33,15 @@ export default function ActivityClient({ id }: ActivityClientProps) {
   if (!Component) {
     return (
       <Card className="mx-auto mt-20 max-w-xl space-y-4 p-6 text-center text-reef-shell">
-        <h1 className="text-2xl font-bold">Atividade não encontrada</h1>
+        <h1 className="text-2xl font-bold">Atividade nï¿½o encontrada</h1>
         <p className="text-reef-shell/80">
-          A aventura que você tentou acessar ainda não existe. Volte para o recife principal para escolher uma missão válida.
+          A aventura que vocÃª tentou acessar ainda nÃ£o existe. Volte para o recife principal para escolher uma missÃ£o vÃ¡lida.
         </p>
         <Link
           href="/"
           className="inline-flex items-center justify-center rounded-bubble bg-reef-coral px-4 py-2 text-sm font-semibold text-reef-shell shadow-coral"
         >
-          Voltar para a página inicial
+          Voltar para a pÃ¡gina inicial
         </Link>
       </Card>
     );

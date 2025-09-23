@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { Providers } from "@/components/providers";
+import { CursorAssist } from "@/components/accessibility/cursor-assist";
 import "./globals.css";
 
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           Ir para o conteÃºdo principal
         </a>
         <div id="sr-announce" aria-live="polite" className="sr-only" />
+        <CursorAssist />
         <Providers>
           <main id="conteudo" className="relative z-10 flex min-h-screen flex-col">
             {children}

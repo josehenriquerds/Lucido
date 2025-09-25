@@ -68,6 +68,12 @@ type ScoreBoard = {
 
   memory: number;
 
+  "syllable-join": number;
+
+  "spelling-beaba": number;
+
+  colors: number;
+
   total: number;
 
 };
@@ -134,6 +140,12 @@ const SCORE_DEFAULT: ScoreBoard = {
 
   memory: 0,
 
+  "syllable-join": 0,
+
+  "spelling-beaba": 0,
+
+  colors: 0,
+
   total: 0,
 
 };
@@ -175,6 +187,12 @@ const MODULE_PROGRESS_DEFAULT: ModuleProgress = {
   story: 0,
 
   parent: 0,
+
+  "syllable-join": 0,
+
+  "spelling-beaba": 0,
+
+  colors: 0,
 
 };
 

@@ -308,7 +308,7 @@ export function MemoryAdventure() {
                 key={card.id}
                 onClick={() => handleFlip(card.id)}
                 disabled={(isResolving && !isActive) || card.isFiller}
-                className={`relative h-6 sm:h-6 md:h-6 w-full transition-transform duration-300 hover:-translate-y-1 disabled:cursor-not-allowed ${baseRing}`}
+                className={`relative h-16 sm:h-20 md:h-24 lg:h-28 w-full transition-transform duration-300 hover:-translate-y-1 disabled:cursor-not-allowed ${baseRing}`}
                 style={{  borderRadius: 18 }}
                 aria-pressed={isActive}
                 aria-label={card.isFiller ? "Carta especial" : `Carta ${card.id}`}
@@ -325,12 +325,7 @@ export function MemoryAdventure() {
                     <span className="relative inline-block">
                       {deckType === "emoji" ? companion : card.value}
                       {/* Badge de emoji interno (para letras/sílabas) */}
-                      <span
-                        className="absolute -top-2 -right-5 sm:-top-3 sm:-right-6 text-2xl sm:text-3xl select-none"
-                        aria-hidden="true"
-                      >
-                        {deckType === "emoji" ? "" : companion}
-                      </span>
+                     
                     </span>
                   </span>
 

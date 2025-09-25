@@ -46,8 +46,8 @@ const EASY_FISH: FishDefinition[] = [
   },
   {
     id: "pearl-sardine",
-    name: "Sardinha Pérola",
-    emoji: "🐟⚪",
+    name: "Pérola",
+    emoji: "⚪",
     difficulty: "easy",
     fact: "Coleciona pedrinhas claras para decorar o recife.",
     habitat: "reef",
@@ -55,15 +55,15 @@ const EASY_FISH: FishDefinition[] = [
   {
     id: "reef-butterfly",
     name: "Borbopeixe",
-    emoji: "🦋🐠",
+    emoji: "🐠",
     difficulty: "easy",
     fact: "Passeia entre corais como se voasse debaixo d'água.",
     habitat: "reef",
   },
   {
     id: "seagrass-goby",
-    name: "Gobizinho das Algas",
-    emoji: "🐟🌿",
+    name: "Algas",
+    emoji: "🌿",
     difficulty: "easy",
     fact: "Esconde pequenas pistas entre as algas altas.",
     habitat: "reef",
@@ -71,7 +71,7 @@ const EASY_FISH: FishDefinition[] = [
   {
     id: "tide-damselfish",
     name: "Donzela das Marés",
-    emoji: "🐠🌊",
+    emoji: "🐠",
     difficulty: "easy",
     fact: "Acompanha mergulhos suaves nas aulas iniciais.",
     habitat: "shallow",
@@ -79,7 +79,7 @@ const EASY_FISH: FishDefinition[] = [
   {
     id: "sparkle-clown",
     name: "Palhaço Cintilante",
-    emoji: "🐡✨",
+    emoji: "🐡",
     difficulty: "easy",
     fact: "Solta risadas em bolhas quando alguém acerta de primeira.",
     habitat: "reef",
@@ -87,7 +87,7 @@ const EASY_FISH: FishDefinition[] = [
   {
     id: "azure-rasbora",
     name: "Rasbora Azul",
-    emoji: "🐠🔵",
+    emoji: "🐠",
     difficulty: "easy",
     fact: "Brilha em azul intenso para sinalizar atenção.",
     habitat: "shallow",
@@ -95,7 +95,7 @@ const EASY_FISH: FishDefinition[] = [
   {
     id: "mellow-molly",
     name: "Molinésia Serena",
-    emoji: "🐠🟩",
+    emoji: "🐠",
     difficulty: "easy",
     fact: "Nada devagar para treinar movimentos delicados.",
     habitat: "shallow",
@@ -103,7 +103,7 @@ const EASY_FISH: FishDefinition[] = [
   {
     id: "sand-piperfish",
     name: "Peixe-Pipa de Areia",
-    emoji: "🐟💨",
+    emoji: "🐟",
     difficulty: "easy",
     fact: "Desenha rotas na areia para guiar a turma.",
     habitat: "shallow",
@@ -113,7 +113,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "ember-lionfish",
     name: "Peixe-Leão Brasa",
-    emoji: "🐟🔥",
+    emoji: "🐟",
     difficulty: "medium",
     fact: "Expande espinhos luminosos quando o foco está alto.",
     habitat: "reef",
@@ -121,7 +121,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "orchid-octopus",
     name: "Polvo Orquídea",
-    emoji: "🐙🌺",
+    emoji: "🐙",
     difficulty: "medium",
     fact: "Muda de cor para combinar com flores submarinas.",
     habitat: "reef",
@@ -129,7 +129,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "cerulean-ray",
     name: "Arraia Celeste",
-    emoji: "🐠🌌",
+    emoji: "🐠",
     difficulty: "medium",
     fact: "Desliza como cometa azul para indicar a resposta certa.",
     habitat: "reef",
@@ -137,7 +137,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "lantern-parrotfish",
     name: "Budião Lanterna",
-    emoji: "🐠💡",
+    emoji: "🐠",
     difficulty: "medium",
     fact: "Ilumina túneis quando o desafio pede mais atenção.",
     habitat: "reef",
@@ -145,7 +145,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "tide-boxfish",
     name: "Peixe-Caixa das Marés",
-    emoji: "🐟📦",
+    emoji: "🐟",
     difficulty: "medium",
     fact: "Entrega pequenas recompensas ao fim das rodadas.",
     habitat: "reef",
@@ -153,7 +153,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "sapphire-stingray",
     name: "Arraia Safira",
-    emoji: "🐟🔹",
+    emoji: "🐟",
     difficulty: "medium",
     fact: "Faz loops brilhantes após duas respostas corretas seguidas.",
     habitat: "reef",
@@ -161,7 +161,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "swirl-cuttle",
     name: "Choco Espiral",
-    emoji: "🦑🌀",
+    emoji: "🦑",
     difficulty: "medium",
     fact: "Deixa rastros coloridos para treinar escrita no ar.",
     habitat: "reef",
@@ -169,7 +169,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "azure-lobster",
     name: "Lagosta Azul",
-    emoji: "🦞🔵",
+    emoji: "🦞",
     difficulty: "medium",
     fact: "Organiza cartas de bingo com suas pinças precisas.",
     habitat: "reef",
@@ -177,7 +177,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "chorus-seadrum",
     name: "Tamboril Coral",
-    emoji: "🐟🔔",
+    emoji: "🐟",
     difficulty: "medium",
     fact: "Marca o ritmo das sílabas com sininhos submersos.",
     habitat: "reef",
@@ -185,7 +185,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "kelp-surgeon",
     name: "Cirurgião das Algas",
-    emoji: "🐟🌿",
+    emoji: "🐟",
     difficulty: "medium",
     fact: "Apara algas altas para abrir caminho ao cardume.",
     habitat: "reef",
@@ -193,7 +193,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "bubble-mantis",
     name: "Camarão Mantis Bolha",
-    emoji: "🦐💭",
+    emoji: "🦐",
     difficulty: "medium",
     fact: "Dispara bolhas coloridas quando a resposta é correta.",
     habitat: "reef",
@@ -201,7 +201,7 @@ const MEDIUM_FISH: FishDefinition[] = [
   {
     id: "prism-pipefish",
     name: "Peixe-Cachimbo Prisma",
-    emoji: "🐠🔍",
+    emoji: "🐠",
     difficulty: "medium",
     fact: "Amplia letras como lente para reforçar a leitura.",
     habitat: "reef",
@@ -211,7 +211,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "midnight-dragonet",
     name: "Dragonete Meia-Noite",
-    emoji: "🐟🌙",
+    emoji: "🐟",
     difficulty: "hard",
     fact: "Acende pintinhas como estrelas em grutas silenciosas.",
     habitat: "grotto",
@@ -219,7 +219,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "abyssal-angler",
     name: "Peixe-Lanterna do Abismo",
-    emoji: "🐠🔮",
+    emoji: "🐠",
     difficulty: "hard",
     fact: "Usa cristal luminoso para guiar mergulhos difíceis.",
     habitat: "grotto",
@@ -227,7 +227,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "glacier-goby",
     name: "Gobí de Gelo",
-    emoji: "🐟❄️",
+    emoji: "🐟",
     difficulty: "hard",
     fact: "Mantém a calma mesmo em águas profundas e frias.",
     habitat: "grotto",
@@ -235,7 +235,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "volcanic-crab",
     name: "Caranguejo Vulcânico",
-    emoji: "🦀🔥",
+    emoji: "🦀",
     difficulty: "hard",
     fact: "Protege cavernas quentes com suas pinças incandescentes.",
     habitat: "grotto",
@@ -243,7 +243,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "aurora-squid",
     name: "Lula Aurora",
-    emoji: "🦑✨",
+    emoji: "🦑",
     difficulty: "hard",
     fact: "Solta faíscas coloridas quando alguém vence um desafio difícil.",
     habitat: "grotto",
@@ -251,7 +251,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "echo-orca",
     name: "Orca Ecoante",
-    emoji: "🐳🔊",
+    emoji: "🐳",
     difficulty: "hard",
     fact: "Repete sílabas com cantos para reforçar memorização.",
     habitat: "grotto",
@@ -259,7 +259,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "galaxy-dolphin",
     name: "Golfinho Galáxia",
-    emoji: "🐬✨",
+    emoji: "🐬",
     difficulty: "hard",
     fact: "Dá saltos brilhantes em sequências sem erros.",
     habitat: "grotto",
@@ -267,7 +267,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "ancient-turtle",
     name: "Tartaruga Anciã",
-    emoji: "🐢⏳",
+    emoji: "🐢",
     difficulty: "hard",
     fact: "Conta histórias antigas para incentivar a persistência.",
     habitat: "grotto",
@@ -275,7 +275,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "crystal-jelly",
     name: "Medusa de Cristal",
-    emoji: "🐚✨",
+    emoji: "🐚",
     difficulty: "hard",
     fact: "Pulsa como cristal para marcar o ritmo das sílabas.",
     habitat: "grotto",
@@ -283,7 +283,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "phantom-ray",
     name: "Arraia Fantasma",
-    emoji: "🐟👻",
+    emoji: "🐟",
     difficulty: "hard",
     fact: "Aparece discreta para treinar movimentos precisos.",
     habitat: "grotto",
@@ -291,7 +291,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "storm-swordfish",
     name: "Peixe-Espada Tempestade",
-    emoji: "🐠⚡",
+    emoji: "🐠",
     difficulty: "hard",
     fact: "Corta obstáculos difíceis com velocidade elétrica.",
     habitat: "grotto",
@@ -299,7 +299,7 @@ const HARD_FISH: FishDefinition[] = [
   {
     id: "luminous-whale",
     name: "Baleia Luminescente",
-    emoji: "🐋✨",
+    emoji: "🐋",
     difficulty: "hard",
     fact: "Cria ondas calmas para lembrar de respirar fundo.",
     habitat: "grotto",

@@ -3,11 +3,14 @@
 import Link from "next/link";
 
 import { BingoAdventure } from "@/components/activities/bingo-adventure";
+import { ColorsAdventure } from "@/components/activities/colors-adventure";
 import { MemoryAdventure } from "@/components/activities/memory-adventure";
 import { RhymesAdventure } from "@/components/activities/rhymes-adventure";
 import { SpellingAdventure } from "@/components/activities/spelling-adventure";
+import { SpellingBeabaAdventure } from "@/components/activities/spelling-beaba-adventure";
 import { StoryAdventure } from "@/components/activities/story-adventure";
 import { SyllablesAdventure } from "@/components/activities/syllables-adventure";
+import { SyllableJoinAdventure } from "@/components/activities/syllable-join-adventure";
 import { VowelsAdventure } from "@/components/activities/vowels-adventure-next";
 import { WordsAdventure } from "@/components/activities/words-adventure";
 import { Card } from "@/components/ui/card";
@@ -21,6 +24,9 @@ const ACTIVITY_MAP: Record<string, React.ComponentType> = {
   memory: MemoryAdventure,
   story: StoryAdventure,
   spelling: SpellingAdventure,
+  "syllable-join": SyllableJoinAdventure,
+  "spelling-beaba": SpellingBeabaAdventure,
+  colors: ColorsAdventure,
 };
 
 type ActivityClientProps = {

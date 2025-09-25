@@ -153,7 +153,7 @@ export function BingoAdventure() {
 
         {/* Cartela no MESMO formato (pílulas em 3 colunas) */}
         <div className="mx-auto max-w-[min(1200px,96vw)]">
-          <div className="grid grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
             {board.map((cell) => {
               const theme = getSyllableTheme(cell.syllable.toUpperCase());
               return (
@@ -164,7 +164,7 @@ export function BingoAdventure() {
                     marked={cell.marked}
                     onClick={() => handleMark(cell.syllable)}
                     className={cn(
-                      "min-h-[54px] sm:min-h-[60px] md:min-h-[64px]",
+                      "min-h-[48px] sm:min-h-[56px] md:min-h-[64px] lg:min-h-[72px] xl:min-h-[80px]",
                       !cell.marked && "hover:shadow-[0_14px_34px_rgba(15,23,42,.12)]"
                     )}
                     showHelperImage
@@ -175,10 +175,10 @@ export function BingoAdventure() {
                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-[18px]">
                       <div
                         className="grid place-items-center rounded-full bg-emerald-500 text-white animate-stamp"
-                        style={{ width: "42px", height: "42px" }}
+                        style={{ width: "clamp(32px, 6vw, 48px)", height: "clamp(32px, 6vw, 48px)" }}
                         aria-hidden
                       >
-                        <CheckCircle className="w-5 h-5" />
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
                     </div>
                   )}

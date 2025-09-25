@@ -87,6 +87,117 @@ export const BINGO_SYLLABLES = [
 
 export const MEMORY_PAIRS = ["A", "E", "I", "O", "U", "B", "C", "D"] as const;
 
+export const SYLLABLE_JOIN_WORDS = [
+  { id: "sapo", silabas: ["SA", "PO"], palavra: "SAPO", emoji: "🐸", categoria: "animais" },
+  { id: "bola", silabas: ["BO", "LA"], palavra: "BOLA", emoji: "⚽", categoria: "brinquedos" },
+  { id: "cama", silabas: ["CA", "MA"], palavra: "CAMA", emoji: "🛏️", categoria: "casa" },
+  { id: "pipa", silabas: ["PI", "PA"], palavra: "PIPA", emoji: "🪁", categoria: "brincadeiras" },
+  { id: "vela", silabas: ["VE", "LA"], palavra: "VELA", emoji: "🕯️", categoria: "casa" },
+  { id: "gato", silabas: ["GA", "TO"], palavra: "GATO", emoji: "🐱", categoria: "animais" },
+  { id: "pato", silabas: ["PA", "TO"], palavra: "PATO", emoji: "🦆", categoria: "animais" },
+  { id: "foca", silabas: ["FO", "CA"], palavra: "FOCA", emoji: "🦭", categoria: "animais" },
+  { id: "lua", silabas: ["LU", "A"], palavra: "LUA", emoji: "🌙", categoria: "natureza" },
+  { id: "sol", silabas: ["SO", "L"], palavra: "SOL", emoji: "☀️", categoria: "natureza" },
+] as const;
+
+export const SPELLING_WORDS = [
+  { id: "sol", palavra: "SOL", letras: ["S", "O", "L"], emoji: "☀️", categoria: "natureza" },
+  { id: "uva", palavra: "UVA", letras: ["U", "V", "A"], emoji: "🍇", categoria: "alimentos" },
+  { id: "ovo", palavra: "OVO", letras: ["O", "V", "O"], emoji: "🥚", categoria: "alimentos" },
+  { id: "mel", palavra: "MEL", letras: ["M", "E", "L"], emoji: "🍯", categoria: "alimentos" },
+  { id: "casa", palavra: "CASA", letras: ["C", "A", "S", "A"], emoji: "🏠", categoria: "casa" },
+  { id: "sapo", palavra: "SAPO", letras: ["S", "A", "P", "O"], emoji: "🐸", categoria: "animais" },
+  { id: "peixe", palavra: "PEIXE", letras: ["P", "E", "I", "X", "E"], emoji: "🐟", categoria: "animais" },
+  { id: "rato", palavra: "RATO", letras: ["R", "A", "T", "O"], emoji: "🐭", categoria: "animais" },
+  { id: "gato", palavra: "GATO", letras: ["G", "A", "T", "O"], emoji: "🐱", categoria: "animais" },
+  { id: "bola", palavra: "BOLA", letras: ["B", "O", "L", "A"], emoji: "⚽", categoria: "brinquedos" },
+  { id: "lua", palavra: "LUA", letras: ["L", "U", "A"], emoji: "🌙", categoria: "natureza" },
+  { id: "pato", palavra: "PATO", letras: ["P", "A", "T", "O"], emoji: "🦆", categoria: "animais" },
+] as const;
+
+export const COLOR_GAME_DATA = {
+  cores: [
+    {
+      id: "vermelho",
+      label: "VERMELHO",
+      color: "#EF4444",
+      shadowColor: "#FCA5A5",
+      itens: [
+        { id: "maca", nome: "Maçã", emoji: "🍎" },
+        { id: "coracao", nome: "Coração", emoji: "❤️" },
+        { id: "joaninha", nome: "Joaninha", emoji: "🐞" },
+        { id: "morango", nome: "Morango", emoji: "🍓" },
+        { id: "tomate", nome: "Tomate", emoji: "🍅" }
+      ]
+    },
+    {
+      id: "amarelo",
+      label: "AMARELO",
+      color: "#EAB308",
+      shadowColor: "#FDE047",
+      itens: [
+        { id: "sol", nome: "Sol", emoji: "☀️" },
+        { id: "estrela", nome: "Estrela", emoji: "⭐" },
+        { id: "milho", nome: "Milho", emoji: "🌽" },
+        { id: "banana", nome: "Banana", emoji: "🍌" },
+        { id: "abelha", nome: "Abelha", emoji: "🐝" }
+      ]
+    },
+    {
+      id: "azul",
+      label: "AZUL",
+      color: "#3B82F6",
+      shadowColor: "#93C5FD",
+      itens: [
+        { id: "peixe", nome: "Peixe", emoji: "🐟" },
+        { id: "gota", nome: "Gota", emoji: "💧" },
+        { id: "pipa", nome: "Pipa", emoji: "🪁" },
+        { id: "baleia", nome: "Baleia", emoji: "🐋" },
+        { id: "oceano", nome: "Oceano", emoji: "🌊" }
+      ]
+    },
+    {
+      id: "verde",
+      label: "VERDE",
+      color: "#22C55E",
+      shadowColor: "#86EFAC",
+      itens: [
+        { id: "folha", nome: "Folha", emoji: "🍃" },
+        { id: "sapo", nome: "Sapo", emoji: "🐸" },
+        { id: "abacate", nome: "Abacate", emoji: "🥑" },
+        { id: "arvore", nome: "Árvore", emoji: "🌳" },
+        { id: "tartaruga", nome: "Tartaruga", emoji: "🐢" }
+      ]
+    },
+    {
+      id: "roxo",
+      label: "ROXO",
+      color: "#8B5CF6",
+      shadowColor: "#C4B5FD",
+      itens: [
+        { id: "uva", nome: "Uva", emoji: "🍇" },
+        { id: "flor", nome: "Flor", emoji: "🌸" },
+        { id: "beringela", nome: "Berinjela", emoji: "🍆" },
+        { id: "unicornio", nome: "Unicórnio", emoji: "🦄" },
+        { id: "ametista", nome: "Cristal", emoji: "💜" }
+      ]
+    },
+    {
+      id: "laranja",
+      label: "LARANJA",
+      color: "#F97316",
+      shadowColor: "#FDBA74",
+      itens: [
+        { id: "laranja", nome: "Laranja", emoji: "🍊" },
+        { id: "fogo", nome: "Fogo", emoji: "🔥" },
+        { id: "folha-outono", nome: "Folha de Outono", emoji: "🍂" },
+        { id: "abobora", nome: "Abóbora", emoji: "🎃" },
+        { id: "caranguejo", nome: "Caranguejo", emoji: "🦀" }
+      ]
+    }
+  ]
+} as const;
+
 export const STORY_SCENES = [
   {
     id: "scene-a",
@@ -135,7 +246,10 @@ export type ModuleId =
   | "bingo"
   | "memory"
   | "story"
-  | "parent";
+  | "parent"
+  | "syllable-join"
+  | "spelling-beaba"
+  | "colors";
 
 export const MODULES: {
   id: ModuleId;
@@ -219,6 +333,30 @@ export const MODULES: {
     icon: "📖",
     difficulty: "Iniciante",
     accent: "#10B981",
+  },
+  {
+    id: "syllable-join",
+    name: "Junte as Sílabas",
+    description: "Arraste e conecte metades de sílabas para formar palavras completas.",
+    icon: "🧩",
+    difficulty: "Intermediário",
+    accent: "#A855F7",
+  },
+  {
+    id: "spelling-beaba",
+    name: "Soletrando (Be-a-Bá)",
+    description: "Complete as palavras arrastando letras para os slots corretos.",
+    icon: "🔤",
+    difficulty: "Intermediário",
+    accent: "#F59E0B",
+  },
+  {
+    id: "colors",
+    name: "Brincando com as Cores",
+    description: "Arraste os objetos para as cartelas das cores corretas.",
+    icon: "🎨",
+    difficulty: "Iniciante",
+    accent: "#EC4899",
   },
   {
     id: "parent",

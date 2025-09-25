@@ -236,28 +236,8 @@ export function SpellingBeabaAdventure() {
             Novo Jogo
           </BubbleOption>
         </div>
-
-        {/* Cards das palavras */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-          {currentRound.map((word, index) => {
-            const isCompleted = completedWords.some(cw => cw.word === word.palavra);
-
-            return (
-              <CardBoard
-                key={word.id}
-                word={word}
-                onComplete={handleWordComplete}
-                onLetterPlace={(slotIndex, letter) => handleLetterPlace(index, slotIndex, letter)}
-                showHints={showHints}
-                disabled={isCompleted}
-                className={isCompleted ? "opacity-75 transform scale-95" : ""}
-              />
-            );
-          })}
-        </div>
-
-        {/* Banco de letras */}
-        <div className="bg-white/80 rounded-3xl p-6 shadow-lg">
+ {/* Banco de letras */}
+        <div className="bg-white/80 rounded-3xl p-6 shadow-lg gap-6 mb-8">
           <h3 className="text-lg font-bold text-reef-shadow/80 mb-4 text-center">
             Banco de Letras
           </h3>
@@ -277,6 +257,24 @@ export function SpellingBeabaAdventure() {
               );
             })}
           </div>
+        </div>
+        {/* Cards das palavras */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          {currentRound.map((word, index) => {
+            const isCompleted = completedWords.some(cw => cw.word === word.palavra);
+
+            return (
+              <CardBoard
+                key={word.id}
+                word={word}
+                onComplete={handleWordComplete}
+                onLetterPlace={(slotIndex, letter) => handleLetterPlace(index, slotIndex, letter)}
+                showHints={showHints}
+                disabled={isCompleted}
+                className={isCompleted ? "opacity-75 transform scale-95" : ""}
+              />
+            );
+          })}
         </div>
 
         {/* Status de progresso */}

@@ -224,7 +224,7 @@ export function SyllableJoinAdventure() {
             state="idle"
             className="ml-auto text-sm"
           >
-            <RotateCcw className="w-4 h-4 mr-2" />
+            {/* <RotateCcw className="w-4 h-4 mr-2" /> */}
             Novo Jogo
           </BubbleOption>
         </div>
@@ -255,16 +255,17 @@ export function SyllableJoinAdventure() {
             return (
               <div key={word.id} className="text-center">
                 <div className="mb-4">
-                  <div className="text-3xl sm:text-4xl mb-2">{word.emoji}</div>
+                  <div className="sm:text-5xl mb-2" style={{ fontSize: "10rem", lineHeight: 1 }}>{word.emoji}</div>
                   {isCompleted ? (
                     <div className="text-lg font-bold text-green-600">
                       {word.silabas[0]}•{word.silabas[1]}
                     </div>
                   ) : (
                     <div className="text-sm text-reef-shadow/60">
-                      {word.categoria}
+                      {/* {word.categoria} */}
                     </div>
-                  )}
+                  )
+                  }
                 </div>
 
                 <WordTarget

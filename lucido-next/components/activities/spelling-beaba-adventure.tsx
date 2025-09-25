@@ -232,7 +232,7 @@ export function SpellingBeabaAdventure() {
             state="idle"
             className="ml-auto text-sm"
           >
-            <RotateCcw className="w-4 h-4 mr-2" />
+            {/* <RotateCcw className="w-1 h-4 mr-2" /> */}
             Novo Jogo
           </BubbleOption>
         </div>

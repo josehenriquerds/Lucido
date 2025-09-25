@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Volume2, Sparkles } from "lucide-react";
 import { ColorConfetti } from "./color-confetti";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,7 @@ export function ColorBoard({
   onConfettiComplete,
 }: ColorBoardProps) {
   const [isDragOver, setIsDragOver] = useState(false);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     if (disabled) return;
@@ -56,8 +57,29 @@ export function ColorBoard({
     console.log(`Playing sound for color: ${label}`);
   };
 
+  // Event listener para eventos customizados de touch
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board) return;
+
+    const handleItemDrop = (event: CustomEvent) => {
+      if (disabled) return;
+
+      const { itemId } = event.detail;
+      onDrop?.(itemId);
+    };
+
+    board.addEventListener('itemDrop', handleItemDrop as EventListener);
+
+    return () => {
+      board.removeEventListener('itemDrop', handleItemDrop as EventListener);
+    };
+  }, [onDrop, disabled]);
+
   return (
     <div
+      ref={boardRef}
+      data-color-board={id}
       className={cn(
         "relative rounded-3xl p-6 transition-all duration-300 min-h-[280px] sm:min-h-[320px]",
         "border-4 border-dashed shadow-xl",

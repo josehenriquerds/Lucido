@@ -1,0 +1,88 @@
+/* Estilos para drag and drop mobile */
+
+/* Classe para highlighting durante drag over em cartelas de cor */
+.drag-over-highlight {
+  transform: scale(1.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border-width: 6px !important;
+  border-style: solid !important;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Animação de tremor para items incorretos */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Feedback visual para toque em elementos draggable */
+.touch-feedback {
+  position: relative;
+}
+
+.touch-feedback::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.touch-feedback:active::after {
+  width: 40px;
+  height: 40px;
+}
+
+/* Melhora a área de toque para elementos pequenos */
+@media (max-width: 768px) {
+  .syllable-half,
+  .color-item {
+    min-height: 48px;
+    min-width: 48px;
+    touch-action: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Estilo para quando elemento está sendo arrastado no mobile */
+.mobile-dragging {
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.8;
+  transform: rotate(2deg);
+  transition: none;
+}
+
+/* Previne scroll inadvertido durante drag */
+.prevent-scroll {
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* Melhora visual para targets de drop em mobile */
+.drop-target-mobile {
+  border: 3px dashed #cbd5e0;
+  background: rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+}
+
+.drop-target-active {
+  border-color: #4299e1;
+  background: rgba(66, 153, 225, 0.1);
+  transform: scale(1.02);
+}

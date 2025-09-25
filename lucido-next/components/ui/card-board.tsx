@@ -94,9 +94,9 @@ export function CardBoard({
         <div className="text-6xl sm:text-7xl md:text-8xl mb-3 animate-bounce-subtle">
           {word.emoji}
         </div>
-        <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
+        {/* <div className="text-sm text-gray-500 uppercase tracking-wider font-medium">
           {word.categoria}
-        </div>
+        </div> */}
       </div>
 
       {/* Slots das letras */}

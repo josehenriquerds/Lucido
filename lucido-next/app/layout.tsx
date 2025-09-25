@@ -2,6 +2,7 @@
 import { Providers } from "@/components/providers";
 import { CursorAssist } from "@/components/accessibility/cursor-assist";
 import "./globals.css";
+import "../styles/mobile-drag-drop.css";
 
 
 export const metadata: Metadata = {

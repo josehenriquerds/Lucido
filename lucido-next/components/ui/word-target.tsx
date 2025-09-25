@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { SyllableHalf } from "./syllable-half";
 import { cn } from "@/lib/utils";
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface ColorItemProps {
@@ -23,6 +24,9 @@ export function ColorItem({
   isUsed = false,
   className,
 }: ColorItemProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef<HTMLDivElement>(null);
+  const touchRef = useRef<{ x: number; y: number; element: HTMLElement | null }>({ x: 0, y: 0, element: null });
   const handleDragStart = (e: React.DragEvent) => {
     if (disabled || isUsed) return;
     e.dataTransfer.setData("text/plain", id);
@@ -36,8 +40,93 @@ export function ColorItem({
     }
   };
 
+  // Touch events para mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (disabled || isUsed) return;
+
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    setIsDragging(true);
+    touchRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      element: e.currentTarget as HTMLElement
+    };
+
+    onDragStart?.();
+
+    // Previne scroll no mobile
+    e.preventDefault();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !touchRef.current.element) return;
+
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    // Move o elemento visualmente
+    const element = touchRef.current.element;
+    const deltaX = touch.clientX - touchRef.current.x;
+    const deltaY = touch.clientY - touchRef.current.y;
+
+    element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    element.style.zIndex = '1000';
+    element.style.opacity = '0.8';
+
+    // Encontra elemento sob o toque
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    const boardElement = elementBelow?.closest('[data-color-board]') as HTMLElement;
+
+    // Highlight na cartela de cor
+    document.querySelectorAll('[data-color-board]').forEach(board => {
+      board.classList.remove('drag-over-highlight');
+    });
+
+    if (boardElement) {
+      boardElement.classList.add('drag-over-highlight');
+    }
+
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isDragging || !touchRef.current.element) return;
+
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+
+    // Reset visual state
+    const element = touchRef.current.element;
+    element.style.transform = '';
+    element.style.zIndex = '';
+    element.style.opacity = '';
+
+    // Remove highlights
+    document.querySelectorAll('[data-color-board]').forEach(board => {
+      board.classList.remove('drag-over-highlight');
+    });
+
+    // Encontra elemento de destino
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    const boardElement = elementBelow?.closest('[data-color-board]') as HTMLElement;
+
+    if (boardElement) {
+      // Dispara evento customizado para simular drop
+      const dropEvent = new CustomEvent('itemDrop', {
+        detail: { itemId: id, colorId }
+      });
+      boardElement.dispatchEvent(dropEvent);
+    }
+
+    setIsDragging(false);
+    touchRef.current = { x: 0, y: 0, element: null };
+  };
+
   return (
     <div
+      ref={dragRef}
       className={cn(
         "relative flex flex-col items-center justify-center transition-all duration-300 select-none group",
         "w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl",
@@ -59,6 +148,9 @@ export function ColorItem({
       )}
       draggable={!disabled && !isUsed}
       onDragStart={handleDragStart}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onClick={handleClick}
       aria-label={`Arrastar ${nome} para cartela ${colorId}`}
       style={

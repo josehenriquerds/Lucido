@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run build:*)",
       "WebFetch(domain:www.amazon.com.br)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

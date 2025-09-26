@@ -1,6 +1,6 @@
 "use client";
 
-import { useDropZone } from "@/hooks/useDragDrop";
+import { useState, useEffect, useRef } from "react";
 import { Volume2, Sparkles } from "lucide-react";
 import { ColorConfetti } from "./color-confetti";
 import { cn } from "@/lib/utils";
@@ -32,51 +32,82 @@ export function ColorBoard({
   showConfetti = false,
   onConfettiComplete,
 }: ColorBoardProps) {
-  // Hook para drop zone
-  const { dropProps } = useDropZone({
-    targetId: id,
-    targetData: {
-      colorId: id,
-      label,
-      color,
-      type: 'color-board'
-    },
-    disabled,
-    acceptedTypes: ['color-item'],
-    onDrop: (droppedItemId, targetId, droppedData, targetData) => {
-      onDrop?.(droppedItemId);
-    }
-  });
+  const [isDragOver, setIsDragOver] = useState(false);
+  const boardRef = useRef<HTMLDivElement>(null);
 
+  const handleDragOver = (e: React.DragEvent) => {
+    if (disabled) return;
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    if (disabled) return;
+    e.preventDefault();
+    const itemId = e.dataTransfer.getData("text/plain");
+    setIsDragOver(false);
+    onDrop?.(itemId);
+  };
 
   const handlePlaySound = () => {
     console.log(`Playing sound for color: ${label}`);
   };
 
+  // Event listener para eventos customizados de touch
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board) return;
+
+    const handleItemDrop = (event: CustomEvent) => {
+      if (disabled) return;
+
+      const { itemId } = event.detail;
+      onDrop?.(itemId);
+    };
+
+    board.addEventListener('itemDrop', handleItemDrop as EventListener);
+
+    return () => {
+      board.removeEventListener('itemDrop', handleItemDrop as EventListener);
+    };
+  }, [onDrop, disabled]);
 
   return (
     <div
-      {...dropProps}
+      ref={boardRef}
+      data-color-board={id}
       className={cn(
         "relative rounded-3xl p-6 transition-all duration-300 min-h-[280px] sm:min-h-[320px]",
         "border-4 border-dashed shadow-xl",
         {
           // Estado normal - com fundo sutil da cor
-          "hover:shadow-2xl": !isComplete,
+          "hover:shadow-2xl": !isDragOver && !isComplete,
+
+          // Drag over
+          "scale-105 shadow-2xl": isDragOver,
 
           // Complete
           "ring-4 ring-green-400 shadow-2xl": isComplete,
 
           // Disabled
-          "opacity-60": disabled,
+          "opacity-60 cursor-not-allowed": disabled,
         },
-        dropProps.className,
         className
       )}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
       style={{
-        borderColor: shadowColor,
-        backgroundColor: `${shadowColor}20`, // Fundo sutil da cor sempre
+        borderColor: isDragOver ? color : shadowColor,
+        backgroundColor: isDragOver ? `${shadowColor}40` : `${shadowColor}20`, // Fundo sutil da cor sempre
       }}
+      aria-label={`Cartela da cor ${label}`}
+      role="button"
+      tabIndex={0}
     >
       {/* Sombra colorida no fundo */}
       <div
@@ -165,7 +196,7 @@ export function ColorBoard({
       )}
 
       {/* Borda piscante para dica */}
-      {false && (
+      {isDragOver && (
         <div
           className="absolute inset-0 rounded-3xl animate-pulse border-4"
           style={{

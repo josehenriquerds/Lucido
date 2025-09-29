@@ -2,6 +2,82 @@
 
 /* Classe para highlighting durante drag over em cartelas de cor */
 .drag-over-highlight {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 2px solid #3b82f6;
+}
+
+/* ===== CLASSES BÁSICAS PARA DRAG (DND-KIT) ===== */
+
+/* Elementos que podem ser arrastados */
+.drag-handle {
+  /* Previne qualquer tipo de scroll/pan durante o drag */
+  touch-action: none;
+  /* Otimiza rendering durante movimento */
+  will-change: transform;
+  /* Melhora área de toque (mínimo 48x48px) */
+  min-height: 48px;
+  min-width: 48px;
+  /* Remove seleção de texto */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Melhora responsividade touch */
+  -webkit-tap-highlight-color: transparent;
+  /* Cursor states */
+  cursor: grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Contêineres com scroll que devem preservar pan vertical */
+.drag-container-vertical {
+  touch-action: pan-y pinch-zoom;
+  overscroll-behavior: contain;
+}
+
+/* Contêineres com scroll que devem preservar pan horizontal */
+.drag-container-horizontal {
+  touch-action: pan-x pinch-zoom;
+  overscroll-behavior: contain;
+}
+
+/* Elemento sendo preparado para drag (após pointer down) */
+.drag-active {
+  cursor: grabbing;
+  /* Otimizações de performance */
+  will-change: transform;
+  /* Remove transições durante prep */
+  transition: none !important;
+}
+
+/* Elemento sendo efetivamente arrastado */
+.drag-dragging {
+  /* Visual feedback */
+  opacity: 0.85;
+  transform: rotate(1deg);
+  /* Remove pointer events para não interferir com drop detection */
+  pointer-events: none;
+  /* Z-index alto para ficar por cima */
+  z-index: 1000;
+  /* Sombra mais proeminente */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+
+/* ===== TARGETS DE DROP ===== */
+
+/* Target básico para drop */
+.drop-target {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Área mínima para touch preciso */
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Target quando item está sendo arrastado por cima */
+.drop-target-hover {
   transform: scale(1.05);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   border-width: 6px !important;
@@ -85,4 +161,57 @@
   border-color: #4299e1;
   background: rgba(66, 153, 225, 0.1);
   transform: scale(1.02);
+}
+/* ===== CLASSES UTILITÁRIAS TAILWIND-STYLE ===== */
+
+.touch-none { touch-action: none; }
+.touch-pan-x { touch-action: pan-x pinch-zoom; }
+.touch-pan-y { touch-action: pan-y pinch-zoom; }
+.touch-manipulation { touch-action: manipulation; }
+
+.overscroll-contain { overscroll-behavior: contain; }
+.overscroll-none { overscroll-behavior: none; }
+.overscroll-auto { overscroll-behavior: auto; }
+
+.will-change-transform { will-change: transform; }
+.will-change-auto { will-change: auto; }
+
+/* ===== DND-KIT SPECIFIC STYLES ===== */
+
+/* DragOverlay styles */
+.dnd-overlay {
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.9;
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+}
+
+/* Dragging state for sortable items */
+.sortable-dragging {
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* Drop zone indicators */
+.drop-zone-over {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 2px dashed #3b82f6;
+  transform: scale(1.02);
+}
+
+/* Touch-specific optimizations for dnd-kit */
+@media (hover: none) and (pointer: coarse) {
+  .drag-handle {
+    /* Larger touch target on mobile */
+    min-height: 56px;
+    min-width: 56px;
+    padding: 12px;
+  }
+
+  /* Remove hover effects on touch devices */
+  .drag-handle:hover {
+    transform: none;
+    cursor: grab;
+  }
 }

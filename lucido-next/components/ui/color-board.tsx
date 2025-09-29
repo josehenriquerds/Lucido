@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { Droppable } from "@/components/dnd";
 import { Volume2, Sparkles } from "lucide-react";
 import { ColorConfetti } from "./color-confetti";
 import { cn } from "@/lib/utils";
@@ -32,83 +32,44 @@ export function ColorBoard({
   showConfetti = false,
   onConfettiComplete,
 }: ColorBoardProps) {
-  const [isDragOver, setIsDragOver] = useState(false);
-  const boardRef = useRef<HTMLDivElement>(null);
-
-  const handleDragOver = (e: React.DragEvent) => {
-    if (disabled) return;
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    if (disabled) return;
-    e.preventDefault();
-    const itemId = e.dataTransfer.getData("text/plain");
-    setIsDragOver(false);
-    onDrop?.(itemId);
-  };
-
   const handlePlaySound = () => {
     console.log(`Playing sound for color: ${label}`);
   };
 
-  // Event listener para eventos customizados de touch
-  useEffect(() => {
-    const board = boardRef.current;
-    if (!board) return;
+  const baseClasses = cn(
+    "relative rounded-3xl p-6 transition-all duration-300 min-h-[280px] sm:min-h-[320px]",
+    "border-4 border-dashed shadow-xl",
+    {
+      // Estado normal - com fundo sutil da cor
+      "hover:shadow-2xl": !isComplete,
 
-    const handleItemDrop = (event: CustomEvent) => {
-      if (disabled) return;
+      // Complete
+      "ring-4 ring-green-400 shadow-2xl": isComplete,
 
-      const { itemId } = event.detail;
-      onDrop?.(itemId);
-    };
+      // Disabled
+      "opacity-60": disabled,
+    },
+    className
+  );
 
-    board.addEventListener('itemDrop', handleItemDrop as EventListener);
-
-    return () => {
-      board.removeEventListener('itemDrop', handleItemDrop as EventListener);
-    };
-  }, [onDrop, disabled]);
+  const boardStyle = {
+    borderColor: shadowColor,
+    backgroundColor: `${shadowColor}20`, // Fundo sutil da cor sempre
+  };
 
   return (
-    <div
-      ref={boardRef}
-      data-color-board={id}
-      className={cn(
-        "relative rounded-3xl p-6 transition-all duration-300 min-h-[280px] sm:min-h-[320px]",
-        "border-4 border-dashed shadow-xl",
-        {
-          // Estado normal - com fundo sutil da cor
-          "hover:shadow-2xl": !isDragOver && !isComplete,
-
-          // Drag over
-          "scale-105 shadow-2xl": isDragOver,
-
-          // Complete
-          "ring-4 ring-green-400 shadow-2xl": isComplete,
-
-          // Disabled
-          "opacity-60 cursor-not-allowed": disabled,
-        },
-        className
-      )}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      style={{
-        borderColor: isDragOver ? color : shadowColor,
-        backgroundColor: isDragOver ? `${shadowColor}40` : `${shadowColor}20`, // Fundo sutil da cor sempre
-      }}
-      aria-label={`Cartela da cor ${label}`}
-      role="button"
-      tabIndex={0}
-    >
+    <Droppable id={id} disabled={disabled}>
+      {({ setNodeRef, isOver }) => (
+        <div
+          ref={setNodeRef}
+          className={cn(baseClasses, isOver && "drop-zone-over")}
+          style={boardStyle}
+          aria-label={`Cartela de cor ${label}`}
+          onClick={() => {
+            // Handle click to drop (fallback for touch)
+            // This will be handled by the parent component
+          }}
+        >
       {/* Sombra colorida no fundo */}
       <div
         className="absolute inset-0 rounded-3xl opacity-30 -z-10"
@@ -196,15 +157,17 @@ export function ColorBoard({
       )}
 
       {/* Borda piscante para dica */}
-      {isDragOver && (
+      {isOver && (
         <div
           className="absolute inset-0 rounded-3xl animate-pulse border-4"
           style={{
             borderColor: color,
-            
+
           }}
         />
       )}
-    </div>
+        </div>
+      )}
+    </Droppable>
   );
 }

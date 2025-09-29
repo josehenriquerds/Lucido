@@ -6,6 +6,8 @@ import { ActivityHeader, ActivitySection } from "@/components/activities/activit
 import { useGame } from "@/components/game-provider";
 import { Card } from "@/components/ui/card";
 import { VOWEL_TARGETS } from "@/lib/game-data";
+import { DndProvider, Draggable, Droppable, DragOverlayPortal } from "@/components/dnd";
+import { DragEndEvent } from "@dnd-kit/core";
 
 const VOWELS = Object.keys(VOWEL_TARGETS) as (keyof typeof VOWEL_TARGETS)[];
 
@@ -154,6 +156,7 @@ export function VowelsAdventure() {
   const [selected, setSelected] = useState<string>("A");
   const [round, setRound] = useState<Round>(() => initialRound("vogais", "A"));
   const [celebrate, setCelebrate] = useState<null | { word: string; emoji: string }>(null);
+  const [draggedLetter, setDraggedLetter] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
@@ -205,15 +208,35 @@ export function VowelsAdventure() {
     });
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setDraggedLetter(null);
+
+    if (!over) return;
+
+    const targetId = over.id as string;
+    const droppedLetter = active.id as string;
+
+    handleDrop(targetId, droppedLetter);
+  };
+
+  const handleOptionClick = (targetId: string) => {
+    handleDrop(targetId, round.letter);
+  };
+
   return (
-    <div className="font-lexenddeca">
-      <ActivityHeader
-        title="Vogais Mágicas"
-        subtitle="Pratique identificação de letras e faça combinações com os habitantes do oceano."
-        moduleId="vowels"
-        icon="🐚"
-        score={scores.vowels}
-      />
+    <DndProvider
+      onDragStart={(event) => setDraggedLetter(event.active.id as string)}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="font-lexenddeca">
+        <ActivityHeader
+          title="Vogais Mágicas"
+          subtitle="Pratique identificação de letras e faça combinações com os habitantes do oceano."
+          moduleId="vowels"
+          icon="🐚"
+          score={scores.vowels}
+        />
 
       <ActivitySection>
         <div className="mb-3 flex flex-wrap gap-2">
@@ -266,44 +289,49 @@ export function VowelsAdventure() {
         <h2 className="mb-4 text-4xl font-bold text-shell">Arraste a letra até a figura certa</h2>
         <div className="flex flex-col gap-6 md:flex-row">
           <Card className="flex h-full min-h-[360px] flex-col items-center justify-center gap-6 p-10 text-center">
-            <span
-              draggable
-              onDragStart={(event) => {
-                event.dataTransfer?.setData("text/plain", round.letter);
-                event.dataTransfer?.setDragImage(event.currentTarget, 48, 48);
-              }}
-              className="bubble-inset flex h-40 w-40 cursor-grab items-center justify-center rounded-3xl bg-white/20 text-8xl font-bold text-deep-blue shadow-lagoon"
-            >
-              {round.letter}
-            </span>
+            <Draggable id={round.letter}>
+              {({ setNodeRef, attributes, listeners, style, isDragging }) => (
+                <span
+                  ref={setNodeRef}
+                  style={style}
+                  {...attributes}
+                  {...listeners}
+                  className={`bubble-inset flex h-40 w-40 drag-handle touch-none items-center justify-center rounded-3xl bg-white/20 text-8xl font-bold text-deep-blue shadow-lagoon ${isDragging ? 'opacity-50' : ''}`}
+                  aria-label={`Arrastar letra ${round.letter}`}
+                >
+                  {round.letter}
+                </span>
+              )}
+            </Draggable>
             <p className="text-base md:text-lg text-reef-shell/70">Você também pode tocar na figura para responder.</p>
           </Card>
 
           <div className="grid flex-1 gap-6 sm:grid-cols-3">
             {round.options.map((option) => (
-              <div
-                key={option.id}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={(event) => {
-                  event.preventDefault();
-                  const data = event.dataTransfer?.getData("text/plain") ?? null;
-                  handleDrop(option.id, data);
-                }}
-                onClick={() => handleDrop(option.id, round.letter)}
-                className={`glass-card relative flex cursor-pointer flex-col items-center justify-center gap-5 rounded-3xl p-8 text-center transition hover:-translate-y-1 ${
-                  option.state === "correct"
-                    ? "bg-reef-algae/80 text-reef-shell scale-[1.02]"
-                    : option.state === "incorrect"
-                    ? "bg-reef-coral/80 text-shell"
-                    : ""
-                }`}
-              >
-                <span className="text-6xl md:text-7xl" aria-hidden="true">
-                  {option.emoji}
-                </span>
-                <span className="text-2xl font-semibold">{option.word}</span>
-                {option.state === "correct" && <span className="pointer-events-none absolute inset-0 rounded-3xl ring-4 ring-white/70" />}
-              </div>
+              <Droppable key={option.id} id={option.id}>
+                {({ setNodeRef, isOver }) => (
+                  <div
+                    ref={setNodeRef}
+                    onClick={() => handleOptionClick(option.id)}
+                    className={`glass-card relative flex cursor-pointer flex-col items-center justify-center gap-5 rounded-3xl p-8 text-center transition hover:-translate-y-1 touch-manipulation ${
+                      option.state === "correct"
+                        ? "bg-reef-algae/80 text-reef-shell scale-[1.02]"
+                        : option.state === "incorrect"
+                        ? "bg-reef-coral/80 text-shell"
+                        : isOver
+                          ? "drop-zone-over"
+                          : ""
+                    }`}
+                    aria-label={`Soltar letra na opção ${option.word}`}
+                  >
+                    <span className="text-6xl md:text-7xl" aria-hidden="true">
+                      {option.emoji}
+                    </span>
+                    <span className="text-2xl font-semibold">{option.word}</span>
+                    {option.state === "correct" && <span className="pointer-events-none absolute inset-0 rounded-3xl ring-4 ring-white/70" />}
+                  </div>
+                )}
+              </Droppable>
             ))}
           </div>
         </div>
@@ -317,7 +345,19 @@ export function VowelsAdventure() {
           </div>
         </div>
       )}
+
+      {/* DragOverlay para feedback visual */}
+      <DragOverlayPortal className="dnd-overlay">
+        {draggedLetter ? (
+          <span
+            className="bubble-inset flex h-40 w-40 items-center justify-center rounded-3xl bg-white/20 text-8xl font-bold text-deep-blue shadow-lagoon pointer-events-none"
+          >
+            {draggedLetter}
+          </span>
+        ) : null}
+      </DragOverlayPortal>
     </div>
+    </DndProvider>
   );
 }
 

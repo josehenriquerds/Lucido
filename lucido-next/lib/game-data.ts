@@ -1,5 +1,5 @@
 export const VOWEL_TARGETS = {
-  A: [
+ A: [
   { emoji: "🐝", word: "Abelha" },
   { emoji: "🍍", word: "Abacaxi" },
   { emoji: "🍎", word: "Amora" },

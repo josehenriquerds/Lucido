@@ -3,7 +3,7 @@
  * Compatível com iOS Safari e Android Chrome
  */
 
-/* ===== CLASSES BÁSICAS PARA DRAG ===== */
+/* ===== CLASSES BÁSICAS PARA DRAG (DND-KIT) ===== */
 
 /* Elementos que podem ser arrastados */
 .drag-handle {
@@ -21,6 +21,12 @@
   user-select: none;
   /* Melhora responsividade touch */
   -webkit-tap-highlight-color: transparent;
+  /* Cursor states */
+  cursor: grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 /* Contêineres com scroll que devem preservar pan vertical */
@@ -260,3 +266,43 @@
 
 .will-change-transform { will-change: transform; }
 .will-change-auto { will-change: auto; }
+
+/* ===== DND-KIT SPECIFIC STYLES ===== */
+
+/* DragOverlay styles */
+.dnd-overlay {
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.9;
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+}
+
+/* Dragging state for sortable items */
+.sortable-dragging {
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* Drop zone indicators */
+.drop-zone-over {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 2px dashed #3b82f6;
+  transform: scale(1.02);
+}
+
+/* Touch-specific optimizations for dnd-kit */
+@media (hover: none) and (pointer: coarse) {
+  .drag-handle {
+    /* Larger touch target on mobile */
+    min-height: 56px;
+    min-width: 56px;
+    padding: 12px;
+  }
+
+  /* Remove hover effects on touch devices */
+  .drag-handle:hover {
+    transform: none;
+    cursor: grab;
+  }
+}

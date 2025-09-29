@@ -9,6 +9,8 @@ import { BubbleOption } from "@/components/ui/bubble-option";
 import { Palette, RotateCcw, Trophy, Lightbulb } from "lucide-react";
 import { COLOR_GAME_DATA } from "@/lib/game-data";
 import { cn } from "@/lib/utils";
+import { DndProvider, DragOverlayPortal } from "@/components/dnd";
+import { DragEndEvent } from "@dnd-kit/core";
 
 type GameDifficulty = "easy" | "medium" | "hard";
 type GameState = "playing" | "celebrating" | "completed";
@@ -102,6 +104,7 @@ export function ColorsAdventure() {
   const [usedItems, setUsedItems] = useState<Set<string>>(new Set());
   const [totalAttempts, setTotalAttempts] = useState(0);
   const [correctAttempts, setCorrectAttempts] = useState(0);
+  const [draggedItem, setDraggedItem] = useState<PlacedItem | null>(null);
   const [boardStates, setBoardStates] = useState<Record<string, ColorBoardState>>({});
 
   // Filtrar cores por dificuldade
@@ -224,6 +227,24 @@ export function ColorsAdventure() {
     }));
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setDraggedItem(null);
+
+    if (!over) return;
+
+    const itemId = active.id as string;
+    const colorId = over.id as string;
+
+    handleItemDrop(colorId, itemId);
+  };
+
+  const handleDragStart = (event: DragEndEvent) => {
+    const itemId = event.active.id as string;
+    const item = availableItems.find(item => item.id === itemId);
+    setDraggedItem(item || null);
+  };
+
   const handleNewGame = () => {
     initializeRound();
   };
@@ -255,14 +276,18 @@ export function ColorsAdventure() {
   }
 
   return (
-    <div className="relative">
-      <ActivityHeader
-        title="Brincando com as Cores"
-        subtitle="Arraste os objetos para as cartelas das cores corretas."
-        moduleId="colors"
-        icon={<Palette className="w-6 h-6" />}
-        score={scores["colors"] || 0}
-      />
+    <DndProvider
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="relative">
+        <ActivityHeader
+          title="Brincando com as Cores"
+          subtitle="Arraste os objetos para as cartelas das cores corretas."
+          moduleId="colors"
+          icon={<Palette className="w-6 h-6" />}
+          score={scores["colors"] || 0}
+        />
 
       <ActivitySection>
         {/* Controles */}
@@ -383,6 +408,22 @@ export function ColorsAdventure() {
           </div>
         )}
       </ActivitySection>
+
+      {/* DragOverlay para feedback visual */}
+      <DragOverlayPortal className="dnd-overlay">
+        {draggedItem ? (
+          <ColorItem
+            id={draggedItem.id}
+            nome={draggedItem.nome}
+            emoji={draggedItem.emoji}
+            colorId={draggedItem.colorId}
+            disabled={false}
+            isUsed={false}
+            className="pointer-events-none"
+          />
+        ) : null}
+      </DragOverlayPortal>
     </div>
+    </DndProvider>
   );
 }

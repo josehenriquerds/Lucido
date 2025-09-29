@@ -25,7 +25,7 @@ export function WordTarget({
   className,
   disabled = false,
 }: WordTargetProps) {
-  const handleDrop = (index: number) => (droppedText: string) => {
+  const handleSyllableDrop = (index: number, droppedText: string) => {
     if (disabled || isCompleted) return;
 
     // Verifica se a sílaba já foi usada em outro lugar
@@ -77,7 +77,8 @@ export function WordTarget({
             color={connectedSyllables[index] ? getSyllableColor(connectedSyllables[index]) : undefined}
             isTarget
             isEmpty={!connectedSyllables[index]}
-            onDrop={handleDrop(index)}
+            onDrop={(droppedText) => handleSyllableDrop(index, droppedText)}
+            targetId={`word-target-${syllables.join('')}-${index}`}
             isMatched={isCompleted}
             disabled={disabled || isCompleted}
             className="drop-shadow-lg"

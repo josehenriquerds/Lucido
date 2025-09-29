@@ -1,6 +1,6 @@
 "use client";
 
-import { useDropZone } from "@/hooks/useDragDrop";
+import { Droppable } from "@/components/dnd";
 import { Volume2, Sparkles } from "lucide-react";
 import { ColorConfetti } from "./color-confetti";
 import { cn } from "@/lib/utils";
@@ -32,52 +32,44 @@ export function ColorBoard({
   showConfetti = false,
   onConfettiComplete,
 }: ColorBoardProps) {
-  // Hook para drop zone
-  const { dropProps } = useDropZone({
-    targetId: id,
-    targetData: {
-      colorId: id,
-      label,
-      color,
-      type: 'color-board'
-    },
-    disabled,
-    acceptedTypes: ['color-item'],
-    onDrop: (droppedItemId, targetId, droppedData, targetData) => {
-      onDrop?.(droppedItemId);
-    }
-  });
-
-
   const handlePlaySound = () => {
     console.log(`Playing sound for color: ${label}`);
   };
 
+  const baseClasses = cn(
+    "relative rounded-3xl p-6 transition-all duration-300 min-h-[280px] sm:min-h-[320px]",
+    "border-4 border-dashed shadow-xl",
+    {
+      // Estado normal - com fundo sutil da cor
+      "hover:shadow-2xl": !isComplete,
+
+      // Complete
+      "ring-4 ring-green-400 shadow-2xl": isComplete,
+
+      // Disabled
+      "opacity-60": disabled,
+    },
+    className
+  );
+
+  const boardStyle = {
+    borderColor: shadowColor,
+    backgroundColor: `${shadowColor}20`, // Fundo sutil da cor sempre
+  };
 
   return (
-    <div
-      {...dropProps}
-      className={cn(
-        "relative rounded-3xl p-6 transition-all duration-300 min-h-[280px] sm:min-h-[320px]",
-        "border-4 border-dashed shadow-xl",
-        {
-          // Estado normal - com fundo sutil da cor
-          "hover:shadow-2xl": !isComplete,
-
-          // Complete
-          "ring-4 ring-green-400 shadow-2xl": isComplete,
-
-          // Disabled
-          "opacity-60": disabled,
-        },
-        dropProps.className,
-        className
-      )}
-      style={{
-        borderColor: shadowColor,
-        backgroundColor: `${shadowColor}20`, // Fundo sutil da cor sempre
-      }}
-    >
+    <Droppable id={id} disabled={disabled}>
+      {({ setNodeRef, isOver }) => (
+        <div
+          ref={setNodeRef}
+          className={cn(baseClasses, isOver && "drop-zone-over")}
+          style={boardStyle}
+          aria-label={`Cartela de cor ${label}`}
+          onClick={() => {
+            // Handle click to drop (fallback for touch)
+            // This will be handled by the parent component
+          }}
+        >
       {/* Sombra colorida no fundo */}
       <div
         className="absolute inset-0 rounded-3xl opacity-30 -z-10"
@@ -174,6 +166,8 @@ export function ColorBoard({
           }}
         />
       )}
-    </div>
+        </div>
+      )}
+    </Droppable>
   );
 }

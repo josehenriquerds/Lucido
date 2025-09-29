@@ -9,6 +9,8 @@ import { BubbleOption } from "@/components/ui/bubble-option";
 import { Puzzle, RotateCcw, Trophy } from "lucide-react";
 import { SYLLABLE_JOIN_WORDS } from "@/lib/game-data";
 import { cn } from "@/lib/utils";
+import { DndProvider, DragOverlayPortal } from "@/components/dnd";
+import { DragEndEvent } from "@dnd-kit/core";
 
 type GameState = "playing" | "celebrating" | "completed";
 
@@ -79,6 +81,7 @@ export function SyllableJoinAdventure() {
   const [availableSyllables, setAvailableSyllables] = useState<string[]>([]);
   const [wordTargets, setWordTargets] = useState<Record<string, [string | null, string | null]>>({});
   const [usedSyllables, setUsedSyllables] = useState<Set<string>>(new Set());
+  const [draggedSyllable, setDraggedSyllable] = useState<string | null>(null);
 
   // Mapeamento de pares esperados
   const expectedPairs = useMemo(() => {
@@ -175,6 +178,30 @@ export function SyllableJoinAdventure() {
     }
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setDraggedSyllable(null);
+
+    if (!over) return;
+
+    // Extrair informações do drop target
+    const targetId = over.id as string;
+    const syllable = active.id as string;
+
+    // Encontrar qual palavra e índice do target
+    const targetParts = targetId.split('-');
+    if (targetParts.length < 4) return;
+
+    const wordIndex = targetParts.slice(2, -1).join('');
+    const slotIndex = parseInt(targetParts[targetParts.length - 1]);
+
+    // Encontrar o wordId correspondente
+    const word = currentRound.find(w => w.silabas.join('') === wordIndex);
+    if (!word) return;
+
+    handleSyllableConnect(word.id, slotIndex, syllable);
+  };
+
 
   const handleNewGame = () => {
     initializeRound();
@@ -189,14 +216,18 @@ export function SyllableJoinAdventure() {
   }
 
   return (
-    <div className="relative">
-      <ActivityHeader
-        title="Junte as Sílabas"
-        subtitle="Arraste e conecte metades de sílabas para formar palavras completas."
-        moduleId="syllable-join"
-        icon={<Puzzle className="w-6 h-6" />}
-        score={scores["syllable-join"] || 0}
-      />
+    <DndProvider
+      onDragStart={(event) => setDraggedSyllable(event.active.id as string)}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="relative">
+        <ActivityHeader
+          title="Junte as Sílabas"
+          subtitle="Arraste e conecte metades de sílabas para formar palavras completas."
+          moduleId="syllable-join"
+          icon={<Puzzle className="w-6 h-6" />}
+          score={scores["syllable-join"] || 0}
+        />
 
       <ActivitySection>
         {/* Controles de dificuldade */}
@@ -303,6 +334,19 @@ export function SyllableJoinAdventure() {
           </div>
         )}
       </ActivitySection>
+
+      {/* DragOverlay para feedback visual */}
+      <DragOverlayPortal className="dnd-overlay">
+        {draggedSyllable ? (
+          <SyllableHalf
+            text={draggedSyllable}
+            color="#3B82F6"
+            draggable={false}
+            className="pointer-events-none"
+          />
+        ) : null}
+      </DragOverlayPortal>
     </div>
+    </DndProvider>
   );
 }

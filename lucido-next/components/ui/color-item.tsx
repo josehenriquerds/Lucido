@@ -1,6 +1,6 @@
 "use client";
 
-import { useDraggable } from "@/hooks/useDragDrop";
+import { Draggable } from "@/components/dnd";
 import { cn } from "@/lib/utils";
 
 interface ColorItemProps {
@@ -24,66 +24,41 @@ export function ColorItem({
   isUsed = false,
   className,
 }: ColorItemProps) {
-  // Hook para drag usando o novo sistema
-  const { dragRef, isDragging, dragProps } = useDraggable({
-    itemId: id,
-    itemData: {
-      nome,
-      emoji,
-      colorId,
-      type: 'color-item'
-    },
-    disabled: disabled || isUsed,
-    onDragStart: () => onDragStart?.(),
-    onDrop: (itemId, targetId, targetData) => {
-      // O drop será tratado pela cartela de cor
-    },
-    onCancel: () => {
-      // Drag cancelado - pode adicionar feedback visual se necessário
-    }
-  });
-
   const handleClick = () => {
     if (!disabled && !isUsed) {
       onDragStart?.();
     }
   };
 
-  return (
-    <div
-      ref={dragRef as React.RefObject<HTMLDivElement>}
-      {...dragProps}
-      className={cn(
-        "relative flex flex-col items-center justify-center transition-all duration-300 group",
-        "w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl",
-        "shadow-lg border-2",
-        {
-          // Estado normal - com cor de fundo correspondente
-          "border-gray-200 hover:shadow-xl hover:-translate-y-2 hover:rotate-1":
-            !disabled && !isUsed,
+  const baseClasses = cn(
+    "relative flex flex-col items-center justify-center transition-all duration-300 group",
+    "w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl",
+    "shadow-lg border-2",
+    {
+      // Estado normal - com cor de fundo correspondente
+      "border-gray-200 hover:shadow-xl hover:-translate-y-2 hover:rotate-1":
+        !disabled && !isUsed,
 
-          // Estado usado
-          "bg-gray-100 border-gray-300 opacity-40":
-            isUsed,
+      // Estado usado
+      "bg-gray-100 border-gray-300 opacity-40":
+        isUsed,
 
-          // Estado desabilitado
-          "bg-gray-200 border-gray-400 opacity-60":
-            disabled,
-        },
-        dragProps.className,
-        className
-      )}
-      onClick={handleClick}
-      aria-label={`Arrastar ${nome} para cartela ${colorId}`}
-      style={
-        !disabled && !isUsed
-          ? {
-              backgroundColor: `${getColorForId(colorId)}15`, // Fundo sutil da cor
-              borderColor: getColorForId(colorId),
-            }
-          : undefined
+      // Estado desabilitado
+      "bg-gray-200 border-gray-400 opacity-60":
+        disabled,
+    },
+    className
+  );
+
+  const itemStyle = !disabled && !isUsed
+    ? {
+        backgroundColor: `${getColorForId(colorId)}15`, // Fundo sutil da cor
+        borderColor: getColorForId(colorId),
       }
-    >
+    : undefined;
+
+  const content = (
+    <>
       {/* Emoji principal */}
       <div className="text-3xl sm:text-4xl md:text-5xl mb-1 filter drop-shadow-sm">
         {emoji}
@@ -126,7 +101,30 @@ export function ColorItem({
         }
         .animate-shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; }
       `}</style>
-    </div>
+    </>
+  );
+
+  return (
+    <Draggable id={id} disabled={disabled || isUsed}>
+      {({ setNodeRef, attributes, listeners, style, isDragging }) => (
+        <div
+          ref={setNodeRef}
+          style={{ ...style, ...itemStyle }}
+          {...attributes}
+          {...listeners}
+          className={cn(
+            baseClasses,
+            "drag-handle touch-none",
+            isDragging && "opacity-50"
+          )}
+          onClick={handleClick}
+          onPointerDown={() => onDragStart?.()}
+          aria-label={`Arrastar ${nome} para cartela ${colorId}`}
+        >
+          {content}
+        </div>
+      )}
+    </Draggable>
   );
 }
 

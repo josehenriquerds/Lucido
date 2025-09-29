@@ -1,6 +1,6 @@
 "use client";
 
-import { useDraggable, useDropZone } from "@/hooks/useDragDrop";
+import { Draggable, Droppable } from "@/components/dnd";
 import { cn } from "@/lib/utils";
 
 interface SyllableHalfProps {
@@ -34,39 +34,12 @@ export function SyllableHalf({
   targetId = `target-${text}`,
 }: SyllableHalfProps) {
 
-  // Hook para drag (quando é um elemento arrastável)
-  const dragHook = useDraggable({
-    itemId: syllableId,
-    itemData: { text, color, type: 'syllable' },
-    disabled: disabled || !draggable || isTarget,
-    onDragStart: () => onDragStart?.(),
-    onDrop: (itemId, targetId, targetData) => {
-      // O drop será tratado pelo target
-    },
-    onCancel: () => {
-      // Drag cancelado - nenhuma ação necessária
-    }
-  });
-
-  // Hook para drop zone (quando é um target)
-  const dropHook = useDropZone({
-    targetId: targetId,
-    targetData: { expectedText: text, type: 'syllable-target' },
-    disabled: disabled || !isTarget,
-    onDrop: (droppedItemId, targetId, droppedData) => {
-      if (droppedData?.text) {
-        onDrop?.(droppedData.text);
-      }
-    }
-  });
-
   const baseClasses = cn(
     "relative flex items-center justify-center rounded-full font-bold transition-all duration-300",
     "border-2 shadow-lg",
     {
       // Target específico
       "border-dashed border-gray-300 bg-white/80": isTarget && isEmpty,
-      "drop-target-hover": isTarget && isEmpty,
 
       // Sílaba normal
       "border-white bg-white shadow-[0_8px_16px_rgba(0,0,0,0.1)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)] hover:-translate-y-1":
@@ -79,39 +52,25 @@ export function SyllableHalf({
       "w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24": true,
       "text-lg sm:text-xl md:text-2xl": true,
     },
-    // Adiciona classes do drag system
-    isTarget ? '' : dragHook.dragProps.className,
-    isTarget ? dropHook.dropProps.className : '',
     className
   );
 
-  // Combina props baseado no tipo (draggable vs target)
-  const targetProps = isTarget ? dropHook.dropProps : {};
-  const dragProps = isTarget ? {} : dragHook.dragProps;
+  const syllableStyle = !isTarget && !isEmpty && !isMatched
+    ? {
+        background: `linear-gradient(135deg, ${color}20, ${color}40)`,
+        borderColor: color,
+        color: color,
+      }
+    : undefined;
 
-  const combinedProps = {
-    className: baseClasses,
-    style: !isTarget && !isEmpty && !isMatched
-      ? {
-          background: `linear-gradient(135deg, ${color}20, ${color}40)`,
-          borderColor: color,
-          color: color,
-        }
-      : undefined,
-    'aria-label': isTarget
-      ? isEmpty
-        ? "Área de soltar sílaba"
-        : `Sílaba ${text} conectada`
-      : `Sílaba ${text}`,
-    ...targetProps,
-    ...dragProps
-  };
+  const ariaLabel = isTarget
+    ? isEmpty
+      ? "Área de soltar sílaba"
+      : `Sílaba ${text} conectada`
+    : `Sílaba ${text}`;
 
-  return (
-    <div
-      ref={isTarget ? undefined : (dragHook.dragRef as React.RefObject<HTMLDivElement>)}
-      {...combinedProps}
-    >
+  const content = (
+    <>
       {isEmpty && isTarget ? (
         <span className="text-gray-400 text-xl">?</span>
       ) : (
@@ -128,6 +87,51 @@ export function SyllableHalf({
           )}
         </>
       )}
-    </div>
+    </>
+  );
+
+  // Se é um target (drop zone)
+  if (isTarget) {
+    return (
+      <Droppable id={targetId} disabled={disabled}>
+        {({ setNodeRef, isOver }) => (
+          <div
+            ref={setNodeRef}
+            className={cn(baseClasses, isOver && !isEmpty && "drop-zone-over")}
+            style={syllableStyle}
+            aria-label={ariaLabel}
+            onClick={() => {
+              // Handle click to drop (fallback for touch)
+              // This will be handled by the parent component
+            }}
+          >
+            {content}
+          </div>
+        )}
+      </Droppable>
+    );
+  }
+
+  // Se é um elemento arrastável
+  return (
+    <Draggable id={syllableId} disabled={disabled || !draggable}>
+      {({ setNodeRef, attributes, listeners, style, isDragging }) => (
+        <div
+          ref={setNodeRef}
+          style={{ ...style, ...syllableStyle }}
+          {...attributes}
+          {...listeners}
+          className={cn(
+            baseClasses,
+            "drag-handle touch-none",
+            isDragging && "opacity-50"
+          )}
+          aria-label={ariaLabel}
+          onPointerDown={() => onDragStart?.()}
+        >
+          {content}
+        </div>
+      )}
+    </Draggable>
   );
 }

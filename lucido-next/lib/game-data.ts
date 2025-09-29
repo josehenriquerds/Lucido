@@ -1,39 +1,49 @@
-﻿export const VOWEL_TARGETS = {
-  A: [
-    { emoji: "🐝", word: "Abelha" },
-    { emoji: "✈️", word: "Avião" },
-    { emoji: "⭐", word: "Astro" },
-    { emoji: "🚗", word: "Auto" },
-    { emoji: "🦅", word: "Águia" },
-  ],
-  E: [
-    { emoji: "🐘", word: "Elefante" },
-    { emoji: "✨", word: "Estrela" },
-    { emoji: "🏫", word: "Escola" },
-    { emoji: "🪜", word: "Escada" },
-    { emoji: "⚔️", word: "Espada" },
-  ],
-  I: [
-    { emoji: "🏝️", word: "Ilha" },
-    { emoji: "⛪", word: "Igreja" },
-    { emoji: "🧊", word: "Iglu" },
-    { emoji: "🦎", word: "Iguana" },
-    { emoji: "🥛", word: "Iogurte" },
-  ],
-  O: [
-    { emoji: "8️⃣", word: "Oito" },
-    { emoji: "👁️", word: "Olho" },
-    { emoji: "🥚", word: "Ovo" },
-    { emoji: "🌊", word: "Onda" },
-    { emoji: "🐆", word: "Onça" },
-  ],
-  U: [
-    { emoji: "🦄", word: "Unicórnio" },
-    { emoji: "🍇", word: "Uva" },
-    { emoji: "🐻", word: "Urso" },
-    { emoji: "🏭", word: "Usina" },
-    { emoji: "☂️", word: "Umbrella" },
-  ],
+export const VOWEL_TARGETS = {
+ A: [
+  { emoji: "🐝", word: "Abelha" },
+  { emoji: "🍍", word: "Abacaxi" },
+  { emoji: "🍎", word: "Amora" },
+  { emoji: "🦜", word: "Arara" },
+  { emoji: "👧", word: "Amiga" },
+  { emoji: "✈️", word: "Avião" },
+  { emoji: "🍉", word: "Abacate" },
+  { emoji: "🐕", word: "AuAu" },
+],
+
+E: [
+  { emoji: "🐘", word: "Elefante" },
+  { emoji: "✨", word: "Estrela" },
+  { emoji: "🏫", word: "Escola" },
+  { emoji: "🪜", word: "Escada" },
+  { emoji: "🧒", word: "Eu" },
+  { emoji: "🌳", word: "Erva" },
+],
+
+I: [
+  { emoji: "🏝️", word: "Ilha" },
+  { emoji: "⛪", word: "Igreja" },
+  { emoji: "🦎", word: "Iguana" },
+  { emoji: "🥛", word: "Iogurte" },
+  { emoji: "🎨", word: "Imagem" },
+  { emoji: "🪁", word: "Inseto" },
+],
+
+O: [
+  { emoji: "8️⃣", word: "Oito" },
+  { emoji: "👁️", word: "Olho" },
+  { emoji: "🥚", word: "Ovo" },
+  { emoji: "🌊", word: "Onda" },
+  { emoji: "🐆", word: "Onça" },
+  { emoji: "👂", word: "Ouvido" },
+],
+
+U: [
+  { emoji: "🦄", word: "Unicórnio" },
+  { emoji: "🍇", word: "Uva" },
+  { emoji: "🐻", word: "Urso" },
+  { emoji: "😮", word: "Uau" },
+  { emoji: "1️⃣", word: "Um" }, 
+],
 } as const;
 
 export const SYLLABLES = [

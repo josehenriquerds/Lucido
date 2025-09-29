@@ -10,7 +10,7 @@ import { Palette, RotateCcw, Trophy, Lightbulb } from "lucide-react";
 import { COLOR_GAME_DATA } from "@/lib/game-data";
 import { cn } from "@/lib/utils";
 import { DndProvider, DragOverlayPortal } from "@/components/dnd";
-import { DragEndEvent } from "@dnd-kit/core";
+import { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 
 type GameDifficulty = "easy" | "medium" | "hard";
 type GameState = "playing" | "celebrating" | "completed";
@@ -239,7 +239,7 @@ export function ColorsAdventure() {
     handleItemDrop(colorId, itemId);
   };
 
-  const handleDragStart = (event: DragEndEvent) => {
+  const handleDragStart = (event: DragStartEvent) => {
     const itemId = event.active.id as string;
     const item = availableItems.find(item => item.id === itemId);
     setDraggedItem(item || null);

@@ -14,9 +14,6 @@ interface SyllableHalfProps {
   isEmpty?: boolean;
   className?: string;
   disabled?: boolean;
-  // Novos props para identificação
-  syllableId?: string;
-  targetId?: string;
 }
 
 export function SyllableHalf({
@@ -30,14 +27,16 @@ export function SyllableHalf({
   isEmpty = false,
   className,
   disabled = false,
-  syllableId = text,
-  targetId = `target-${text}`,
 }: SyllableHalfProps) {
 
   const baseClasses = cn(
-    "relative flex items-center justify-center rounded-full font-bold transition-all duration-300",
+    "relative flex items-center justify-center rounded-full font-bold transition-all duration-300 select-none",
     "border-2 shadow-lg",
     {
+      // Estados de drag
+      "cursor-grab active:cursor-grabbing": draggable && !disabled && !isTarget,
+      "cursor-not-allowed opacity-50": disabled,
+
       // Target específico
       "border-dashed border-gray-300 bg-white/80": isTarget && isEmpty,
 
@@ -46,7 +45,7 @@ export function SyllableHalf({
         !isTarget && !isEmpty,
 
       // Matched state
-      "ring-4 ring-green-400 animate-success-bounce": isMatched,
+      "ring-4 ring-green-400 animate-pulse": isMatched,
 
       // Sizes responsivas
       "w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24": true,
@@ -93,7 +92,7 @@ export function SyllableHalf({
   // Se é um target (drop zone)
   if (isTarget) {
     return (
-      <Droppable id={targetId} disabled={disabled}>
+      <Droppable id={`target-${text}`} disabled={disabled}>
         {({ setNodeRef, isOver }) => (
           <div
             ref={setNodeRef}
@@ -114,7 +113,7 @@ export function SyllableHalf({
 
   // Se é um elemento arrastável
   return (
-    <Draggable id={syllableId} disabled={disabled || !draggable}>
+    <Draggable id={`syllable-${text}`} disabled={disabled || !draggable}>
       {({ setNodeRef, attributes, listeners, style, isDragging }) => (
         <div
           ref={setNodeRef}

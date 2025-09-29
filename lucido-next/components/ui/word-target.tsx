@@ -73,12 +73,11 @@ export function WordTarget({
         {[0, 1].map((index) => (
           <SyllableHalf
             key={index}
-            text={connectedSyllables[index] || ""}
+            text={connectedSyllables[index] || `target-${index}`}
             color={connectedSyllables[index] ? getSyllableColor(connectedSyllables[index]) : undefined}
             isTarget
             isEmpty={!connectedSyllables[index]}
             onDrop={(droppedText) => handleSyllableDrop(index, droppedText)}
-            targetId={`word-target-${syllables.join('')}-${index}`}
             isMatched={isCompleted}
             disabled={disabled || isCompleted}
             className="drop-shadow-lg"

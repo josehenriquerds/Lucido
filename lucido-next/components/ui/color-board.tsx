@@ -157,12 +157,12 @@ export function ColorBoard({
       )}
 
       {/* Borda piscante para dica */}
-      {false && (
+      {isOver && (
         <div
           className="absolute inset-0 rounded-3xl animate-pulse border-4"
           style={{
             borderColor: color,
-            
+
           }}
         />
       )}

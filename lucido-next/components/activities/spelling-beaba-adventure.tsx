@@ -9,6 +9,7 @@ import { BubbleOption } from "@/components/ui/bubble-option";
 import { BookOpen, RotateCcw, Trophy, Lightbulb } from "lucide-react";
 import { SPELLING_WORDS } from "@/lib/game-data";
 import { cn } from "@/lib/utils";
+import { ConfettiBurst } from "@/components/ui/confetti-burst";
 
 type GameDifficulty = "easy" | "medium" | "hard";
 type GameState = "playing" | "celebrating" | "completed";
@@ -82,6 +83,7 @@ export function SpellingBeabaAdventure() {
   const [availableLetters, setAvailableLetters] = useState<string[]>([]);
   const [usedLetters, setUsedLetters] = useState<Set<string>>(new Set());
   const [startTime, setStartTime] = useState<number>(Date.now());
+  const [wordConfetti, setWordConfetti] = useState(false);
 
   // Filtrar palavras por dificuldade
   const getWordsByDifficulty = useCallback((diff: GameDifficulty) => {
@@ -146,6 +148,10 @@ export function SpellingBeabaAdventure() {
       speak: `Palavra ${word} completada!`
     });
 
+    // Confetti extra ao completar palavra
+    setWordConfetti(true);
+    setTimeout(() => setWordConfetti(false), 3000);
+
     // Verificar se completou todas as palavras
     if (completedWords.length + 1 >= currentRound.length) {
       setGameState("celebrating");
@@ -161,6 +167,11 @@ export function SpellingBeabaAdventure() {
 
   const handleLetterPlace = (wordIndex: number, slotIndex: number, letter: string) => {
     setUsedLetters(prev => new Set([...prev, letter]));
+  };
+
+  const handleWrongLetter = () => {
+    // Feedback de erro quando tenta colocar letra errada
+    addScore("spelling-beaba", 0, { effect: "error" });
   };
 
   const handleNewGame = () => {
@@ -261,6 +272,7 @@ export function SpellingBeabaAdventure() {
                 word={word}
                 onComplete={handleWordComplete}
                 onLetterPlace={(slotIndex, letter) => handleLetterPlace(index, slotIndex, letter)}
+                onWrongLetter={handleWrongLetter}
                 showHints={showHints}
                 disabled={isCompleted}
                 className={isCompleted ? "opacity-75 transform scale-95" : ""}
@@ -288,6 +300,14 @@ export function SpellingBeabaAdventure() {
           </div>
         )}
       </ActivitySection>
+
+      {/* Confetti extra ao completar palavra */}
+      <ConfettiBurst
+        active={wordConfetti}
+        emojis={["🎉", "🎊", "✨", "⭐", "💫", "🌟"]}
+        count={30}
+        duration={3000}
+      />
     </div>
   );
 }

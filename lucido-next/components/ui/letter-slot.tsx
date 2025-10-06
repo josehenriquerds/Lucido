@@ -13,6 +13,7 @@ interface LetterSlotProps {
   showHint?: boolean;
   className?: string;
   disabled?: boolean;
+  onWrongLetter?: () => void;
 }
 
 export function LetterSlot({
@@ -25,8 +26,10 @@ export function LetterSlot({
   showHint = false,
   className,
   disabled = false,
+  onWrongLetter,
 }: LetterSlotProps) {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     if (disabled) return;
@@ -43,6 +46,20 @@ export function LetterSlot({
     e.preventDefault();
     const droppedLetter = e.dataTransfer.getData("text/plain");
     setIsDragOver(false);
+
+    // Validar se a letra é a correta
+    if (acceptChar && droppedLetter !== acceptChar) {
+      // Letra incorreta - NÃO permitir e dar feedback
+      setIsShaking(true);
+      onWrongLetter?.();
+
+      setTimeout(() => {
+        setIsShaking(false);
+      }, 500);
+
+      return; // NÃO permite colocar a letra errada
+    }
+
     onDrop?.(droppedLetter);
   };
 
@@ -72,6 +89,9 @@ export function LetterSlot({
 
           // Desabilitado
           "opacity-50 cursor-not-allowed": disabled,
+
+          // Animação de tremida ao tentar colocar letra errada
+          "animate-shake": isShaking,
         },
         className
       )}

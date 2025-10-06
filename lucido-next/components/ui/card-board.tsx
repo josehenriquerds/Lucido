@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { LetterSlot } from "./letter-slot";
 import { Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ConfettiBurst } from "./confetti-burst";
 
 interface CardBoardProps {
   word: {
@@ -15,6 +16,7 @@ interface CardBoardProps {
   };
   onComplete?: (word: string) => void;
   onLetterPlace?: (index: number, letter: string) => void;
+  onWrongLetter?: () => void;
   showHints?: boolean;
   disabled?: boolean;
   className?: string;
@@ -24,6 +26,7 @@ export function CardBoard({
   word,
   onComplete,
   onLetterPlace,
+  onWrongLetter,
   showHints = false,
   disabled = false,
   className,
@@ -33,6 +36,7 @@ export function CardBoard({
   );
   const [isCompleted, setIsCompleted] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Reset slots when word changes
   useEffect(() => {
@@ -55,10 +59,16 @@ export function CardBoard({
       if (formedWord === word.palavra) {
         setIsCompleted(true);
         setShowCelebration(true);
+        setShowConfetti(true);
+
         setTimeout(() => {
           onComplete?.(word.palavra);
           setShowCelebration(false);
         }, 1500);
+
+        setTimeout(() => {
+          setShowConfetti(false);
+        }, 3000);
       } else {
         // Incorrect word - shake and clear after delay
         setTimeout(() => {
@@ -66,6 +76,11 @@ export function CardBoard({
         }, 1000);
       }
     }
+  };
+
+  const handleWrongLetter = () => {
+    // Feedback de erro quando tenta colocar letra errada
+    onWrongLetter?.();
   };
 
   const handlePlaySound = () => {
@@ -112,6 +127,7 @@ export function CardBoard({
             isCorrect={isSlotCorrect(index)}
             showHint={showHints}
             disabled={disabled || isCompleted}
+            onWrongLetter={handleWrongLetter}
           />
         ))}
       </div>
@@ -148,6 +164,14 @@ export function CardBoard({
           {word.palavra}
         </div>
       )}
+
+      {/* Confetti ao completar palavra */}
+      <ConfettiBurst
+        active={showConfetti}
+        emojis={["🎉", "⭐", "✨", "🎊", "💫"]}
+        count={20}
+        duration={3000}
+      />
     </div>
   );
 }

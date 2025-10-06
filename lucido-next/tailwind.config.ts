@@ -36,6 +36,16 @@ const config: Config = {
       backgroundImage: {
         "reef-depth": "radial-gradient(circle at 20% 20%, rgba(15, 163, 177, 0.22), transparent 55%), radial-gradient(circle at 75% 10%, rgba(244, 181, 197, 0.25), transparent 60%), linear-gradient(180deg, #011f3a 0%, #033e6b 40%, #0fa3b1 100%)",
       },
+      keyframes: {
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-5px)' },
+          '20%, 40%, 60%, 80%': { transform: 'translateX(5px)' },
+        },
+      },
+      animation: {
+        shake: 'shake 0.5s ease-in-out',
+      },
     },
   },
   plugins: [],

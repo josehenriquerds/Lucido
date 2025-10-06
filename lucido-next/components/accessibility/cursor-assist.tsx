@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const HOLD_STORAGE_KEY = "lucido:hold-to-click";
 const HOLD_DELAY_MS = 500;
@@ -34,7 +34,7 @@ export function CursorAssist() {
   const interactiveRef = useRef<HTMLElement | null>(null);
   const reduceMotionRef = useRef(false);
 
-  const [holdEnabled, setHoldEnabled] = useState<boolean>(() => {
+  const [holdEnabled] = useState<boolean>(() => {
     if (typeof window === "undefined") {
       return false;
     }

@@ -9,6 +9,8 @@ interface ColorConfettiProps {
   duration?: number;
 }
 
+const confettiEmojis = ["✨", "⭐", "🎉", "🎊", "💫", "🌟"];
+
 export function ColorConfetti({
   active,
   color,
@@ -24,8 +26,6 @@ export function ColorConfetti({
     rotation: number;
     scale: number;
   }>>([]);
-
-  const confettiEmojis = ["✨", "⭐", "🎉", "🎊", "💫", "🌟"];
 
   useEffect(() => {
     if (active) {

@@ -4,9 +4,10 @@ import { useCallback, useEffect, useState, memo } from "react";
 import { ActivityHeader, ActivitySection } from "@/components/activities/activity-shell";
 import { useGame } from "@/components/game-provider";
 import { BubbleOption } from "@/components/ui/bubble-option";
-import { Puzzle, RotateCcw, Trophy } from "lucide-react";
+import { Puzzle, RotateCcw, Trophy, Lightbulb } from "lucide-react";
 import { SYLLABLE_JOIN_WORDS } from "@/lib/game-data";
 import { cn } from "@/lib/utils";
+import { ConfettiBurst } from "@/components/ui/confetti-burst";
 
 type GameState = "playing" | "celebrating" | "completed";
 
@@ -75,9 +76,10 @@ interface WordSlotProps {
   wordId: string;
   isCompleted: boolean;
   onDropSyllable: (wordId: string, slotIndex: number, syllable: string) => void;
+  isShaking?: boolean;
 }
 
-function WordSlot({ slots, expectedSyllables, emoji, wordId, isCompleted, onDropSyllable }: WordSlotProps) {
+function WordSlot({ slots, expectedSyllables, emoji, wordId, isCompleted, onDropSyllable, isShaking = false }: WordSlotProps) {
   const handleDrop = (e: React.DragEvent, slotIndex: number) => {
     e.preventDefault();
     const syllable = e.dataTransfer.getData("text/plain");
@@ -114,6 +116,7 @@ function WordSlot({ slots, expectedSyllables, emoji, wordId, isCompleted, onDrop
                 "border-green-500 bg-green-50 text-green-700": slots[slotIndex] && isCompleted,
                 "border-purple-400 bg-purple-50 text-purple-700": slots[slotIndex] && !isCompleted,
                 "border-gray-300 bg-white text-gray-400": !slots[slotIndex],
+                "animate-shake": isShaking,
               }
             )}
             onDrop={(e) => handleDrop(e, slotIndex)}
@@ -185,6 +188,12 @@ export function SyllableJoinAdventure() {
   const [wordSlots, setWordSlots] = useState<Record<string, [string | null, string | null]>>({});
   const [usedSyllables, setUsedSyllables] = useState<Set<string>>(new Set());
 
+  const [shakingWordId, setShakingWordId] = useState<string | null>(null);
+  const [syllableConfetti, setSyllableConfetti] = useState(false);
+  const [wordConfetti, setWordConfetti] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [hintWordId, setHintWordId] = useState<string | null>(null);
+
   const initializeRound = useCallback(() => {
     const wordCount = difficulty === "easy" ? 3 : difficulty === "medium" ? 4 : 5;
     const selectedWords = shuffle([...SYLLABLE_JOIN_WORDS]).slice(0, wordCount);
@@ -214,7 +223,25 @@ export function SyllableJoinAdventure() {
     // Verificar se a sílaba já está sendo usada
     if (usedSyllables.has(syllable)) return;
 
-    // Atualizar slots
+    const word = currentRound.find(w => w.id === wordId);
+    if (!word) return;
+
+    // Verificar se a sílaba é válida para esta palavra
+    const isSyllableValid = word.silabas[0] === syllable || word.silabas[1] === syllable;
+
+    if (!isSyllableValid) {
+      // Sílaba incorreta - dar animação de tremida e NÃO permitir
+      setShakingWordId(wordId);
+      addScore("syllable-join", 0, { effect: "error" });
+
+      setTimeout(() => {
+        setShakingWordId(null);
+      }, 500);
+
+      return; // NÃO permitir colocar a sílaba
+    }
+
+    // Sílaba correta - atualizar slots
     setWordSlots(prev => {
       const updated = { ...prev };
       updated[wordId][slotIndex] = syllable;
@@ -223,18 +250,22 @@ export function SyllableJoinAdventure() {
 
     setUsedSyllables(prev => new Set([...prev, syllable]));
 
+    // Confetti ao acertar uma sílaba
+    setSyllableConfetti(true);
+    setTimeout(() => setSyllableConfetti(false), 2000);
+
     // Verificar se a palavra foi completada
     const updatedSlots = [...wordSlots[wordId]];
     updatedSlots[slotIndex] = syllable;
 
     if (updatedSlots[0] && updatedSlots[1]) {
-      const word = currentRound.find(w => w.id === wordId);
-      if (!word) return;
-
       const formedWord = updatedSlots.join("");
 
       if (formedWord === word.palavra) {
-        // Palavra correta!
+        // Palavra completa correta! Confetti maior
+        setWordConfetti(true);
+        setTimeout(() => setWordConfetti(false), 3000);
+
         addScore("syllable-join", 25, {
           effect: "success",
           speak: `Palavra ${word.palavra} formada!`
@@ -259,21 +290,6 @@ export function SyllableJoinAdventure() {
 
           return newCompleted;
         });
-      } else {
-        // Palavra incorreta - resetar
-        setTimeout(() => {
-          setWordSlots(prev => ({
-            ...prev,
-            [wordId]: [null, null]
-          }));
-          setUsedSyllables(prev => {
-            const newSet = new Set(prev);
-            updatedSlots.forEach(s => s && newSet.delete(s));
-            return newSet;
-          });
-        }, 500);
-
-        addScore("syllable-join", 0, { effect: "error" });
       }
     }
   };
@@ -284,6 +300,25 @@ export function SyllableJoinAdventure() {
 
   const handleCelebrationContinue = () => {
     setGameState("completed");
+  };
+
+  const handleHint = () => {
+    // Encontrar uma palavra incompleta
+    const incompleteWord = currentRound.find(word => {
+      const isCompleted = completedWords.some(cw => cw.word === word.palavra);
+      return !isCompleted;
+    });
+
+    if (incompleteWord) {
+      setHintWordId(incompleteWord.id);
+      setShowHint(true);
+
+      // Esconder a dica após 3 segundos
+      setTimeout(() => {
+        setShowHint(false);
+        setHintWordId(null);
+      }, 3000);
+    }
   };
 
   if (gameState === "celebrating") {
@@ -322,6 +357,15 @@ export function SyllableJoinAdventure() {
           </div>
 
           <BubbleOption
+            onClick={handleHint}
+            state="idle"
+            className="text-sm"
+          >
+            <Lightbulb className="w-4 h-4 mr-1" />
+            Dica
+          </BubbleOption>
+
+          <BubbleOption
             onClick={handleNewGame}
             state="idle"
             className="ml-auto text-sm"
@@ -350,17 +394,29 @@ export function SyllableJoinAdventure() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {currentRound.map(word => {
             const isCompleted = completedWords.some(cw => cw.word === word.palavra);
+            const isShaking = shakingWordId === word.id;
+            const showHintForThisWord = showHint && hintWordId === word.id;
 
             return (
-              <WordSlot
-                key={word.id}
-                wordId={word.id}
-                slots={wordSlots[word.id] || [null, null]}
-                expectedSyllables={word.silabas}
-                emoji={word.emoji}
-                isCompleted={isCompleted}
-                onDropSyllable={handleDropSyllable}
-              />
+              <div key={word.id} className="relative">
+                <WordSlot
+                  wordId={word.id}
+                  slots={wordSlots[word.id] || [null, null]}
+                  expectedSyllables={word.silabas}
+                  emoji={word.emoji}
+                  isCompleted={isCompleted}
+                  onDropSyllable={handleDropSyllable}
+                  isShaking={isShaking}
+                />
+
+                {showHintForThisWord && (
+                  <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-yellow-100 border-2 border-yellow-400 rounded-lg px-4 py-2 shadow-lg animate-bounce z-10">
+                    <div className="text-sm font-bold text-yellow-800">
+                      {word.silabas[0]} + {word.silabas[1]}
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
@@ -384,6 +440,22 @@ export function SyllableJoinAdventure() {
           </div>
         )}
       </ActivitySection>
+
+      {/* Confetti ao acertar uma sílaba */}
+      <ConfettiBurst
+        active={syllableConfetti}
+        emojis={["✨", "⭐", "💫"]}
+        count={12}
+        duration={2000}
+      />
+
+      {/* Confetti maior ao completar palavra inteira */}
+      <ConfettiBurst
+        active={wordConfetti}
+        emojis={["🎉", "🎊", "✨", "⭐", "💫", "🌟", "🎈"]}
+        count={40}
+        duration={3000}
+      />
     </div>
   );
 }

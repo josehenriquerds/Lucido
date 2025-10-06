@@ -8,7 +8,6 @@ import { Celebration } from "@/components/celebration";
 import { useGame } from "@/components/game-provider";
 import { Card } from "@/components/ui/card";
 import { Checkpoint } from "@/components/ui/checkpoint";
-import { PearlProgress } from "@/components/ui/pearl-progress";
 import { MODULES } from "@/lib/game-data";
 import { DailyShoalPanel } from "@/components/ui/daily-shoal-panel";
 

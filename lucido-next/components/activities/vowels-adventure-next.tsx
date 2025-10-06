@@ -91,14 +91,14 @@ function poolForMode(mode: Mode): string[] {
 function targetsFor(letter: string): { emoji: string; word: string }[] {
   if ((VOWELS as string[]).includes(letter)) {
     return VOWEL_TARGETS[letter as keyof typeof VOWEL_TARGETS].map((item) => ({
-      emoji: item.emoji,
-      word: item.word,
+      emoji: item?.emoji || "🔤",
+      word: item?.word || letter,
     }));
   }
   if (CONSONANT_TARGETS[letter]) {
     return CONSONANT_TARGETS[letter].map((item) => ({
-      emoji: item.emoji,
-      word: item.word,
+      emoji: item?.emoji || "🔤",
+      word: item?.word || letter,
     }));
   }
   return [{ emoji: "🔤", word: letter }];

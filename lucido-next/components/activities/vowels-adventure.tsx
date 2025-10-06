@@ -48,11 +48,12 @@ function createRound(vowelOverride?: (typeof VOWELS)[number]): DragRound {
     .map((other) => VOWEL_TARGETS[other][Math.floor(Math.random() * VOWEL_TARGETS[other].length)])
     .sort(() => Math.random() - 0.5)
     .slice(0, 2)
+    .filter((item) => item !== undefined)
     .map((item, index) =>
       buildOption({
-        id: `${item.word}-${index}`,
-        emoji: item.emoji,
-        word: item.word,
+        id: `${item!.word}-${index}`,
+        emoji: item!.emoji,
+        word: item!.word,
         correct: false,
       }),
     );
@@ -61,9 +62,9 @@ function createRound(vowelOverride?: (typeof VOWELS)[number]): DragRound {
     vowel,
     options: [
       buildOption({
-        id: `${correct.word}-certo`,
-        emoji: correct.emoji,
-        word: correct.word,
+        id: `${correct?.word || 'unknown'}-certo`,
+        emoji: correct?.emoji || '❓',
+        word: correct?.word || 'Desconhecido',
         correct: true,
       }),
       ...distractors,

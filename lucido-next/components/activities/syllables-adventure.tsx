@@ -5,7 +5,6 @@ import { ActivityHeader, ActivitySection } from "@/components/activities/activit
 import { useGame } from "@/components/game-provider";
 import { BubbleOption } from "@/components/ui/bubble-option";
 import { SyllableCard } from "@/components/ui/syllable-card";
-import { LetterCard } from "@/components/ui/letter-card";
 import { MessageCircle } from "lucide-react";
 import { SYLLABLES } from "@/lib/game-data";
 
@@ -104,19 +103,12 @@ export function SyllablesAdventure() {
                 {slots.map((slot, i) => (
                   <div
                     key={i}
-                    className={`relative flex items-center justify-center rounded-2xl border-2 border-dashed text-2xl font-bold shadow-inner transition-all duration-200
+                    className={`relative flex items-center justify-center rounded-2xl border-2 border-dashed font-bold shadow-inner transition-all duration-200
                                 h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24
-                                ${slot ? "border-green-500 bg-green-50" : "border-gray-300 bg-white"}`}
+                                text-3xl sm:text-4xl lg:text-5xl
+                                ${slot ? "border-green-500 bg-green-50 text-green-700" : "border-gray-300 bg-white text-gray-400"}`}
                   >
-                    {slot ? (
-                      <LetterCard
-                        value={slot}
-                        className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 !p-1"
-                        showHelperImage={false}
-                      />
-                    ) : (
-                      <span className="text-gray-400 text-xl sm:text-3xl">?</span>
-                    )}
+                    {slot || "?"}
                   </div>
                 ))}
               </div>
@@ -129,18 +121,23 @@ export function SyllablesAdventure() {
             {/* 6 colunas no desktop para caber tudo numa linha; no mobile aumenta gradualmente */}
             <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 md:gap-4 max-w-4xl mx-auto">
               {letters.map((letter) => (
-                <LetterCard
+                <button
                   key={letter}
-                  value={letter}
-                  asButton
                   onClick={() => fillSlot(letter)}
                   disabled={usedLetters.has(letter)}
-                  // REMOVIDO md:w-18/md:h-18 (não existe no Tailwind)
-                  className={`w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-20 lg:h-20 ${
-                    usedLetters.has(letter) ? "opacity-50 pointer-events-none" : ""
-                  }`}
-                  showHelperImage={false}
-                />
+                  className={`
+                    w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-20 lg:h-20
+                    rounded-2xl border-2 font-bold text-2xl sm:text-3xl md:text-4xl
+                    transition-all duration-200
+                    ${
+                      usedLetters.has(letter)
+                        ? "opacity-30 pointer-events-none bg-gray-100 border-gray-200 text-gray-400"
+                        : "bg-white border-blue-400 text-blue-600 hover:bg-blue-50 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+                    }
+                  `}
+                >
+                  {letter}
+                </button>
               ))}
             </div>
           </div>

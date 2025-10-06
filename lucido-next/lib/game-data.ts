@@ -2,11 +2,10 @@ export const VOWEL_TARGETS = {
  A: [
   { emoji: "🐝", word: "Abelha" },
   { emoji: "🍍", word: "Abacaxi" },
-  { emoji: "🍎", word: "Amora" },
   { emoji: "🦜", word: "Arara" },
   { emoji: "👧", word: "Amiga" },
   { emoji: "✈️", word: "Avião" },
-  { emoji: "🍉", word: "Abacate" },
+  { emoji: "🥑", word: "Abacate" },
   { emoji: "🐕", word: "AuAu" },
 ],
 
@@ -16,7 +15,6 @@ E: [
   { emoji: "🏫", word: "Escola" },
   { emoji: "🪜", word: "Escada" },
   { emoji: "🧒", word: "Eu" },
-  { emoji: "🌳", word: "Erva" },
 ],
 
 I: [
@@ -24,12 +22,9 @@ I: [
   { emoji: "⛪", word: "Igreja" },
   { emoji: "🦎", word: "Iguana" },
   { emoji: "🥛", word: "Iogurte" },
-  { emoji: "🎨", word: "Imagem" },
-  { emoji: "🪁", word: "Inseto" },
 ],
 
 O: [
-  { emoji: "8️⃣", word: "Oito" },
   { emoji: "👁️", word: "Olho" },
   { emoji: "🥚", word: "Ovo" },
   { emoji: "🌊", word: "Onda" },
@@ -41,8 +36,7 @@ U: [
   { emoji: "🦄", word: "Unicórnio" },
   { emoji: "🍇", word: "Uva" },
   { emoji: "🐻", word: "Urso" },
-  { emoji: "😮", word: "Uau" },
-  { emoji: "1️⃣", word: "Um" }, 
+  { emoji: "😮", word: "Uau" },, 
 ],
 } as const;
 
@@ -125,7 +119,7 @@ export const SPELLING_WORDS = [
   { id: "pato", palavra: "PATO", letras: ["P", "A", "T", "O"], emoji: "🦆", categoria: "animais" },
 ] as const;
 
-export const COLOR_GAME_DATA = {
+export const getColorGameData = () => ({
   cores: [
     {
       id: "vermelho",
@@ -206,9 +200,11 @@ export const COLOR_GAME_DATA = {
       ]
     }
   ]
-} as const;
+} as const);
 
-export const STORY_SCENES = [
+export const COLOR_GAME_DATA = getColorGameData();
+
+export const getStoryScenes = () => [
   {
     id: "scene-a",
     illustration: "🐠",
@@ -246,6 +242,8 @@ export const STORY_SCENES = [
   },
 ] as const;
 
+export const STORY_SCENES = getStoryScenes();
+
 export type ModuleId =
   | "trail"
   | "vowels"
@@ -261,14 +259,14 @@ export type ModuleId =
   | "spelling-beaba"
   | "colors";
 
-export const MODULES: {
+export const getModules = (): {
   id: ModuleId;
   name: string;
   description: string;
   icon: string;
   difficulty: "Iniciante" | "Intermediário" | "Avançado";
   accent: string;
-}[] = [
+}[] => [
   {
     id: "trail",
     name: "Recife Principal",
@@ -377,6 +375,8 @@ export const MODULES: {
     accent: "#0D9488",
   },
 ];
+
+export const MODULES = getModules();
 export type LeaderboardEntry = {
   id: string;
   name: string;

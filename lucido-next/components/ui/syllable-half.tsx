@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 interface SyllableHalfProps {
   text: string;
   color?: string;
-  onDrop?: (droppedText: string) => void;
   onDragStart?: () => void;
   draggable?: boolean;
   isMatched?: boolean;
@@ -19,7 +18,6 @@ interface SyllableHalfProps {
 export function SyllableHalf({
   text,
   color = "#3B82F6",
-  onDrop,
   onDragStart,
   draggable = true,
   isMatched = false,
@@ -92,11 +90,11 @@ export function SyllableHalf({
   // Se é um target (drop zone)
   if (isTarget) {
     return (
-      <Droppable id={`target-${text}`} disabled={disabled}>
+      <Droppable id={text} disabled={disabled}>
         {({ setNodeRef, isOver }) => (
           <div
             ref={setNodeRef}
-            className={cn(baseClasses, isOver && !isEmpty && "drop-zone-over")}
+            className={cn(baseClasses, isOver && !disabled && "ring-2 ring-blue-400")}
             style={syllableStyle}
             aria-label={ariaLabel}
             onClick={() => {
@@ -113,7 +111,7 @@ export function SyllableHalf({
 
   // Se é um elemento arrastável
   return (
-    <Draggable id={`syllable-${text}`} disabled={disabled || !draggable}>
+    <Draggable id={text} disabled={disabled || !draggable}>
       {({ setNodeRef, attributes, listeners, style, isDragging }) => (
         <div
           ref={setNodeRef}

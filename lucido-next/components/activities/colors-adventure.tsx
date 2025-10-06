@@ -342,7 +342,6 @@ export function ColorsAdventure() {
               label={color.label}
               color={color.color}
               shadowColor={color.shadowColor}
-              onDrop={(itemId) => handleItemDrop(color.id, itemId)}
               acceptedItems={placedItems[color.id] || []}
               isComplete={(placedItems[color.id] || []).length >= (
                 difficulty === "easy" ? 3 : difficulty === "medium" ? 4 : 5

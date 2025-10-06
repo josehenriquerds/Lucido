@@ -20,7 +20,7 @@ function createBoard(): BingoCell[] {
 
 /* Confete leve com emoji */
 const CONFETTI_EMOJIS = ["🫧", "🐚", "✨", "💎", "🌊"] as const;
-function ConfettiBurst({ active, seed = 0 }: { active: boolean; seed?: number }) {
+function ConfettiBurst({ active }: { active: boolean }) {
   const pieces = useMemo(() => {
     if (!active) return [] as { left: number; delay: number; duration: number; emoji: string }[];
     return Array.from({ length: 28 }, (_, i) => ({
@@ -29,7 +29,7 @@ function ConfettiBurst({ active, seed = 0 }: { active: boolean; seed?: number })
       duration: 1.1 + Math.random() * 1.2,
       emoji: CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length],
     }));
-  }, [active, seed]);
+  }, [active]);
   if (!active) return null;
   return (
     <div className="pointer-events-none fixed inset-0 z-[60] overflow-hidden">
@@ -62,7 +62,6 @@ export function BingoAdventure() {
   const [pendingNext, setPendingNext] = useState(false);
 
   const [win, setWin] = useState(false);
-  const [winKey, setWinKey] = useState(0);
 
   const remaining = useMemo(() => board.filter((c) => !c.marked), [board]);
   const calledTheme = called ? getSyllableTheme(called.toUpperCase()) : null;
@@ -76,7 +75,6 @@ export function BingoAdventure() {
       narrate("Parabéns! Você completou o Bingo!");
 
       setWin(true);
-      setWinKey((k) => k + 1);
 
       const next = createBoard();
       setTimeout(() => {
@@ -197,7 +195,7 @@ export function BingoAdventure() {
         </div>
 
         {/* Confete + overlay de vitória */}
-        <ConfettiBurst active={win} seed={winKey} />
+        <ConfettiBurst active={win} />
         {win && (
           <div className="pointer-events-none fixed inset-0 z-[55] grid place-items-center bg-black/30">
             <div className="mx-4 rounded-3xl bg-white/95 px-8 py-8 text-center shadow-[0_24px_48px_rgba(9,37,64,0.25)] animate-popIn">

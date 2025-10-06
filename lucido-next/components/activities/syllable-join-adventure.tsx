@@ -1,16 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState, memo } from "react";
 import { ActivityHeader, ActivitySection } from "@/components/activities/activity-shell";
 import { useGame } from "@/components/game-provider";
-import { SyllableHalf } from "@/components/ui/syllable-half";
-import { WordTarget } from "@/components/ui/word-target";
 import { BubbleOption } from "@/components/ui/bubble-option";
 import { Puzzle, RotateCcw, Trophy } from "lucide-react";
 import { SYLLABLE_JOIN_WORDS } from "@/lib/game-data";
 import { cn } from "@/lib/utils";
-import { DndProvider, DragOverlayPortal } from "@/components/dnd";
-import { DragEndEvent } from "@dnd-kit/core";
 
 type GameState = "playing" | "celebrating" | "completed";
 
@@ -18,6 +14,117 @@ interface CompletedWord {
   word: string;
   emoji: string;
   syllables: readonly [string, string];
+}
+
+interface SyllableTileProps {
+  syllable: string;
+  onDragStart?: () => void;
+  disabled?: boolean;
+  isUsed?: boolean;
+}
+
+function SyllableTile({ syllable, onDragStart, disabled = false, isUsed = false }: SyllableTileProps) {
+  const handleDragStart = (e: React.DragEvent) => {
+    if (disabled || isUsed) return;
+    e.dataTransfer.setData("text/plain", syllable);
+    onDragStart?.();
+  };
+
+  const handleClick = () => {
+    if (!disabled && !isUsed) {
+      onDragStart?.();
+    }
+  };
+
+  return (
+    <div
+      className={cn(
+        "relative flex items-center justify-center font-bold transition-all duration-300 select-none",
+        "w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl",
+        "text-xl sm:text-2xl md:text-3xl",
+        "shadow-lg border-2",
+        {
+          "bg-white border-purple-400 text-purple-700 cursor-grab active:cursor-grabbing hover:shadow-xl hover:-translate-y-1":
+            !disabled && !isUsed,
+          "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed opacity-30":
+            isUsed,
+        }
+      )}
+      draggable={!disabled && !isUsed}
+      onDragStart={handleDragStart}
+      onClick={handleClick}
+      aria-label={`Sílaba ${syllable}`}
+    >
+      <span className="relative z-10 font-extrabold">{syllable}</span>
+      {!disabled && !isUsed && (
+        <div
+          className="absolute inset-0 rounded-2xl opacity-20"
+          style={{
+            background: `radial-gradient(circle at 30% 30%, white, transparent)`,
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+interface WordSlotProps {
+  slots: (string | null)[];
+  expectedSyllables: readonly [string, string];
+  emoji: string;
+  wordId: string;
+  isCompleted: boolean;
+  onDropSyllable: (wordId: string, slotIndex: number, syllable: string) => void;
+}
+
+function WordSlot({ slots, expectedSyllables, emoji, wordId, isCompleted, onDropSyllable }: WordSlotProps) {
+  const handleDrop = (e: React.DragEvent, slotIndex: number) => {
+    e.preventDefault();
+    const syllable = e.dataTransfer.getData("text/plain");
+    if (syllable && !isCompleted) {
+      onDropSyllable(wordId, slotIndex, syllable);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  return (
+    <div className="text-center">
+      <div className="mb-4">
+        <div className="text-6xl sm:text-7xl md:text-8xl mb-2">{emoji}</div>
+        {isCompleted && (
+          <div className="text-lg font-bold text-green-600">
+            {expectedSyllables[0]}•{expectedSyllables[1]}
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-6">
+        {[0, 1].map((slotIndex) => (
+          <div
+            key={slotIndex}
+            className={cn(
+              "relative flex items-center justify-center font-bold shadow-inner transition-all duration-200",
+              "h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 rounded-2xl",
+              "text-2xl sm:text-3xl md:text-4xl",
+              "border-2 border-dashed",
+              {
+                "border-green-500 bg-green-50 text-green-700": slots[slotIndex] && isCompleted,
+                "border-purple-400 bg-purple-50 text-purple-700": slots[slotIndex] && !isCompleted,
+                "border-gray-300 bg-white text-gray-400": !slots[slotIndex],
+              }
+            )}
+            onDrop={(e) => handleDrop(e, slotIndex)}
+            onDragOver={handleDragOver}
+          >
+            {slots[slotIndex] || "?"}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function shuffle<T>(array: T[]): T[] {
@@ -29,10 +136,10 @@ function shuffle<T>(array: T[]): T[] {
   return result;
 }
 
-function Celebration({ words, onContinue }: { words: CompletedWord[]; onContinue: () => void }) {
+const Celebration = memo(function Celebration({ words, onContinue }: { words: CompletedWord[]; onContinue: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 animate-in fade-in duration-300">
-      <div className="mx-4 max-w-md rounded-3xl bg-white/95 p-8 text-center shadow-2xl animate-in slide-in-from-bottom-4 duration-500">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div className="mx-4 max-w-md rounded-3xl bg-white/95 p-8 text-center shadow-2xl">
         <div className="mb-6">
           <Trophy className="mx-auto w-16 h-16 text-yellow-500 mb-4" />
           <h2 className="text-2xl sm:text-3xl font-bold text-reef-coral">
@@ -44,11 +151,10 @@ function Celebration({ words, onContinue }: { words: CompletedWord[]; onContinue
         </div>
 
         <div className="mb-6 space-y-3">
-          {words.map((word, index) => (
+          {words.map((word) => (
             <div
               key={word.word}
               className="flex items-center justify-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-purple-50 to-blue-50"
-              style={{ animationDelay: `${index * 200}ms` }}
             >
               <span className="text-2xl">{word.emoji}</span>
               <span className="font-bold text-lg">
@@ -64,37 +170,21 @@ function Celebration({ words, onContinue }: { words: CompletedWord[]; onContinue
       </div>
     </div>
   );
-}
+});
 
 export function SyllableJoinAdventure() {
   const { scores, addScore, recordModuleCompletion } = useGame();
 
-  // Configuração da rodada
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [gameState, setGameState] = useState<GameState>("playing");
 
-  // Palavras da rodada atual
   const [currentRound, setCurrentRound] = useState<Array<typeof SYLLABLE_JOIN_WORDS[number]>>([]);
   const [completedWords, setCompletedWords] = useState<CompletedWord[]>([]);
 
-  // Estado do jogo
   const [availableSyllables, setAvailableSyllables] = useState<string[]>([]);
-  const [wordTargets, setWordTargets] = useState<Record<string, [string | null, string | null]>>({});
+  const [wordSlots, setWordSlots] = useState<Record<string, [string | null, string | null]>>({});
   const [usedSyllables, setUsedSyllables] = useState<Set<string>>(new Set());
-  const [draggedSyllable, setDraggedSyllable] = useState<string | null>(null);
 
-  // Mapeamento de pares esperados
-  const expectedPairs = useMemo(() => {
-    const pairs: Record<string, string> = {};
-    currentRound.forEach(word => {
-      const [syl1, syl2] = word.silabas;
-      pairs[syl1] = syl2;
-      pairs[syl2] = syl1;
-    });
-    return pairs;
-  }, [currentRound]);
-
-  // Inicializar rodada
   const initializeRound = useCallback(() => {
     const wordCount = difficulty === "easy" ? 3 : difficulty === "medium" ? 4 : 5;
     const selectedWords = shuffle([...SYLLABLE_JOIN_WORDS]).slice(0, wordCount);
@@ -103,105 +193,90 @@ export function SyllableJoinAdventure() {
     setCompletedWords([]);
     setGameState("playing");
 
-    // Criar lista de sílabas disponíveis
     const syllables: string[] = [];
-    const targets: Record<string, [string | null, string | null]> = {};
+    const slots: Record<string, [string | null, string | null]> = {};
 
     selectedWords.forEach(word => {
       syllables.push(...word.silabas);
-      targets[word.id] = [null, null];
+      slots[word.id] = [null, null];
     });
 
     setAvailableSyllables(shuffle(syllables));
-    setWordTargets(targets);
+    setWordSlots(slots);
     setUsedSyllables(new Set());
   }, [difficulty]);
 
-  // Inicializar jogo
   useEffect(() => {
     initializeRound();
-  }, [difficulty, initializeRound]);
+  }, [initializeRound]);
 
-  const handleSyllableConnect = (wordId: string, index: number, syllable: string) => {
-    // Remover sílaba de outros lugares se já estava conectada
-    setWordTargets(prev => {
+  const handleDropSyllable = (wordId: string, slotIndex: number, syllable: string) => {
+    // Verificar se a sílaba já está sendo usada
+    if (usedSyllables.has(syllable)) return;
+
+    // Atualizar slots
+    setWordSlots(prev => {
       const updated = { ...prev };
-
-      // Remover a sílaba de qualquer posição anterior
-      Object.keys(updated).forEach(id => {
-        updated[id] = updated[id].map(s => s === syllable ? null : s) as [string | null, string | null];
-      });
-
-      // Conectar na nova posição
-      updated[wordId][index] = syllable;
-
+      updated[wordId][slotIndex] = syllable;
       return updated;
     });
 
     setUsedSyllables(prev => new Set([...prev, syllable]));
-  };
 
-  const handleWordComplete = (wordId: string, completedWord: string) => {
-    const word = currentRound.find(w => w.id === wordId);
-    if (!word) return;
+    // Verificar se a palavra foi completada
+    const updatedSlots = [...wordSlots[wordId]];
+    updatedSlots[slotIndex] = syllable;
 
-    // Verificar se a palavra está correta
-    if (completedWord === word.palavra) {
-      setCompletedWords(prev => [...prev, {
-        word: word.palavra,
-        emoji: word.emoji,
-        syllables: word.silabas
-      }]);
+    if (updatedSlots[0] && updatedSlots[1]) {
+      const word = currentRound.find(w => w.id === wordId);
+      if (!word) return;
 
-      addScore("syllable-join", 25, {
-        effect: "success",
-        speak: `Palavra ${word.palavra} formada!`
-      });
+      const formedWord = updatedSlots.join("");
 
-      // Verificar se completou todas as palavras
-      if (completedWords.length + 1 >= currentRound.length) {
-        setGameState("celebrating");
-        recordModuleCompletion("syllable-join");
+      if (formedWord === word.palavra) {
+        // Palavra correta!
+        addScore("syllable-join", 25, {
+          effect: "success",
+          speak: `Palavra ${word.palavra} formada!`
+        });
 
+        setCompletedWords(prev => {
+          const newCompleted = [...prev, {
+            word: word.palavra,
+            emoji: word.emoji,
+            syllables: word.silabas
+          }];
+
+          // Verificar se completou TODAS as palavras
+          if (newCompleted.length >= currentRound.length) {
+            setGameState("celebrating");
+            recordModuleCompletion("syllable-join");
+
+            setTimeout(() => {
+              setGameState("completed");
+            }, 3000);
+          }
+
+          return newCompleted;
+        });
+      } else {
+        // Palavra incorreta - resetar
         setTimeout(() => {
-          setGameState("completed");
-        }, 3000);
-      }
-    } else {
-      // Palavra incorreta - resetar esse target
-      setWordTargets(prev => ({
-        ...prev,
-        [wordId]: [null, null]
-      }));
+          setWordSlots(prev => ({
+            ...prev,
+            [wordId]: [null, null]
+          }));
+          setUsedSyllables(prev => {
+            const newSet = new Set(prev);
+            updatedSlots.forEach(s => s && newSet.delete(s));
+            return newSet;
+          });
+        }, 500);
 
-      addScore("syllable-join", 0, { effect: "error" });
+        addScore("syllable-join", 0, { effect: "error" });
+      }
     }
   };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    setDraggedSyllable(null);
-
-    if (!over) return;
-
-    // Extrair informações do drop target
-    const targetId = over.id as string;
-    const syllable = active.id as string;
-
-    // Encontrar qual palavra e índice do target
-    const targetParts = targetId.split('-');
-    if (targetParts.length < 4) return;
-
-    const wordIndex = targetParts.slice(2, -1).join('');
-    const slotIndex = parseInt(targetParts[targetParts.length - 1]);
-
-    // Encontrar o wordId correspondente
-    const word = currentRound.find(w => w.silabas.join('') === wordIndex);
-    if (!word) return;
-
-    handleSyllableConnect(word.id, slotIndex, syllable);
-  };
-
 
   const handleNewGame = () => {
     initializeRound();
@@ -216,18 +291,14 @@ export function SyllableJoinAdventure() {
   }
 
   return (
-    <DndProvider
-      onDragStart={(event) => setDraggedSyllable(event.active.id as string)}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="relative">
-        <ActivityHeader
-          title="Junte as Sílabas"
-          subtitle="Arraste e conecte metades de sílabas para formar palavras completas."
-          moduleId="syllable-join"
-          icon={<Puzzle className="w-6 h-6" />}
-          score={scores["syllable-join"] || 0}
-        />
+    <div className="relative">
+      <ActivityHeader
+        title="Junte as Sílabas"
+        subtitle="Arraste e conecte sílabas para formar palavras completas."
+        moduleId="syllable-join"
+        icon={<Puzzle className="w-6 h-6" />}
+        score={scores["syllable-join"] || 0}
+      />
 
       <ActivitySection>
         {/* Controles de dificuldade */}
@@ -255,7 +326,6 @@ export function SyllableJoinAdventure() {
             state="idle"
             className="ml-auto text-sm"
           >
-            {/* <RotateCcw className="w-4 h-4 mr-2" /> */}
             Novo Jogo
           </BubbleOption>
         </div>
@@ -267,12 +337,10 @@ export function SyllableJoinAdventure() {
           </h3>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5 max-w-4xl mx-auto">
             {availableSyllables.map((syllable, index) => (
-              <SyllableHalf
+              <SyllableTile
                 key={`${syllable}-${index}`}
-                text={syllable}
-                draggable={!usedSyllables.has(syllable)}
-                disabled={usedSyllables.has(syllable)}
-                className={usedSyllables.has(syllable) ? "opacity-30" : ""}
+                syllable={syllable}
+                isUsed={usedSyllables.has(syllable)}
               />
             ))}
           </div>
@@ -284,33 +352,15 @@ export function SyllableJoinAdventure() {
             const isCompleted = completedWords.some(cw => cw.word === word.palavra);
 
             return (
-              <div key={word.id} className="text-center">
-                <div className="mb-4">
-                  <div className="sm:text-5xl mb-2" style={{ fontSize: "10rem", lineHeight: 1 }}>{word.emoji}</div>
-                  {isCompleted ? (
-                    <div className="text-lg font-bold text-green-600">
-                      {word.silabas[0]}•{word.silabas[1]}
-                    </div>
-                  ) : (
-                    <div className="text-sm text-reef-shadow/60">
-                      {/* {word.categoria} */}
-                    </div>
-                  )
-                  }
-                </div>
-
-                <WordTarget
-                  syllables={word.silabas}
-                  expectedPair={expectedPairs}
-                  onComplete={(completedWord) => handleWordComplete(word.id, completedWord)}
-                  isCompleted={isCompleted}
-                  connectedSyllables={wordTargets[word.id]}
-                  onSyllableConnect={(index, syllable) =>
-                    handleSyllableConnect(word.id, index, syllable)
-                  }
-                  disabled={isCompleted}
-                />
-              </div>
+              <WordSlot
+                key={word.id}
+                wordId={word.id}
+                slots={wordSlots[word.id] || [null, null]}
+                expectedSyllables={word.silabas}
+                emoji={word.emoji}
+                isCompleted={isCompleted}
+                onDropSyllable={handleDropSyllable}
+              />
             );
           })}
         </div>
@@ -334,19 +384,6 @@ export function SyllableJoinAdventure() {
           </div>
         )}
       </ActivitySection>
-
-      {/* DragOverlay para feedback visual */}
-      <DragOverlayPortal className="dnd-overlay">
-        {draggedSyllable ? (
-          <SyllableHalf
-            text={draggedSyllable}
-            color="#3B82F6"
-            draggable={false}
-            className="pointer-events-none"
-          />
-        ) : null}
-      </DragOverlayPortal>
     </div>
-    </DndProvider>
   );
 }

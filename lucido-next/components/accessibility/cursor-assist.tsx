@@ -267,28 +267,10 @@ export function CursorAssist() {
     }
   }, [holdEnabled]);
 
-  const toggleHold = useCallback(() => {
-    setHoldEnabled((prev) => !prev);
-  }, []);
-
   return (
     <>
       <div ref={cursorRef} className="lucido-cursor" aria-hidden="true">
         <div className="cursor-hold" />
-      </div>
-      <div className="cursor-preferences" role="complementary">
-        <button
-          type="button"
-          className="cursor-preferences__button"
-          onClick={toggleHold}
-          aria-pressed={holdEnabled}
-        >
-          <span aria-hidden="true">🖱️</span>
-          Segurar para clicar
-        </button>
-        <span className="cursor-preferences__hint">
-          {holdEnabled ? "Pressione por 0,5s para confirmar o clique." : "Ative para treinar controle do mouse."}
-        </span>
       </div>
     </>
   );

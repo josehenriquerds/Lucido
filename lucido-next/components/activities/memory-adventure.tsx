@@ -36,7 +36,6 @@ export const LETTER_BORDER_COLORS: Record<string, string> = {
   U: "#D946EF", V: "#34D399", W: "#F97316", X: "#94A3B8", Y: "#EAB308", Z: "#06D6A0",
 };
 
-function isLetter(val: string) { return /^[A-Z]$/.test(val); }
 function firstLetter(val: string) { return (val[0] || "").toUpperCase(); }
 
 // Emoji “companheiro” dentro da carta (ex.: A → 🪼)
@@ -97,7 +96,7 @@ function createDeck(boardSize: 2 | 3 | 4, deckType: DeckType): MemoryCard[] {
   return values.map((value, index) => ({ id: index, value, flipped: false, matched: false }));
 }
 
-function ConfettiBurst({ active, keySeed = 0 }: { active: boolean; keySeed?: number }) {
+function ConfettiBurst({ active }: { active: boolean }) {
   const pieces = useMemo(() => {
     if (!active) return [] as { left: number; delay: number; duration: number; scale: number; emoji: string }[];
     return Array.from({ length: 28 }, (_, index) => ({
@@ -107,7 +106,7 @@ function ConfettiBurst({ active, keySeed = 0 }: { active: boolean; keySeed?: num
       scale: 0.75 + Math.random() * 0.9,
       emoji: CONFETTI_EMOJIS[index % CONFETTI_EMOJIS.length],
     }));
-  }, [active, keySeed]);
+  }, [active]);
 
   if (!active) return null;
 
@@ -145,15 +144,13 @@ export function MemoryAdventure() {
   const [flipped, setFlipped] = useState<number[]>([]);
   const [isResolving, setIsResolving] = useState(false);
   const [winCelebration, setWinCelebration] = useState(false);
-  const [mismatchIds, setMismatchIds] = useState<number[]>([]);
   const [matchGlowIds, setMatchGlowIds] = useState<number[]>([]);
-  const [confettiKey, setConfettiKey] = useState(0);
 
   // re-cria deck ao trocar tamanho/tipo
   useEffect(() => {
     setDeck(createDeck(boardSize, deckType));
     setFlipped([]); setIsResolving(false); setWinCelebration(false);
-    setMismatchIds([]); setMatchGlowIds([]);
+    setMatchGlowIds([]);
   }, [boardSize, deckType]);
 
   const matchedCount = useMemo(() => deck.filter(c => c.matched || c.isFiller).length, [deck]);
@@ -164,12 +161,11 @@ export function MemoryAdventure() {
     recordModuleCompletion("memory");
     setWinCelebration(true);
     setIsResolving(true);
-    setConfettiKey(k => k + 1);
 
     const t = window.setTimeout(() => {
       setDeck(createDeck(boardSize, deckType));
       setFlipped([]); setIsResolving(false); setWinCelebration(false);
-      setMismatchIds([]); setMatchGlowIds([]);
+      setMatchGlowIds([]);
     }, RESET_DELAY);
     return () => window.clearTimeout(t);
   }, [allMatched, boardSize, deckType, recordModuleCompletion]);
@@ -205,11 +201,10 @@ export function MemoryAdventure() {
     }
 
     // erro
-    setMismatchIds(flipped);
     addScore("memory", 0, { effect: "error" });
     const t = window.setTimeout(() => {
       setDeck(cur => cur.map(c => (flipped.includes(c.id) ? { ...c, flipped: false } : c)));
-      setFlipped([]); setIsResolving(false); setMismatchIds([]);
+      setFlipped([]); setIsResolving(false);
     }, MISMATCH_DELAY);
     return () => window.clearTimeout(t);
   }, [addScore, deck, flipped]);
@@ -218,7 +213,7 @@ export function MemoryAdventure() {
 
   return (
     <div className="relative">
-      <ConfettiBurst active={winCelebration} keySeed={confettiKey} />
+      <ConfettiBurst active={winCelebration} />
 
       {winCelebration && (
         <div className="pointer-events-none fixed inset-0 z-40 grid place-items-center bg-black/30 animate-fadeOut">
@@ -273,7 +268,7 @@ export function MemoryAdventure() {
           type="button"
           onClick={() => {
             setDeck(createDeck(boardSize, deckType));
-            setFlipped([]); setIsResolving(false); setMismatchIds([]); setMatchGlowIds([]); setWinCelebration(false);
+            setFlipped([]); setIsResolving(false); setMatchGlowIds([]); setWinCelebration(false);
           }}
           className="ml-auto inline-flex items-center gap-2 rounded-full bg-reef-teal/20 px-4 py-2 text-sm font-semibold text-reef-shadow hover:-translate-y-0.5 transition"
         >
@@ -285,7 +280,6 @@ export function MemoryAdventure() {
         <div className={`grid ${columnsClass} gap-3 sm:gap-4`}>
           {deck.map(card => {
             const isActive = card.flipped || card.matched || card.isFiller;
-            const isMismatch = mismatchIds.includes(card.id);
             const isMatchGlow = matchGlowIds.includes(card.id);
 
             const baseRing = card.matched

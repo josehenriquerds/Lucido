@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { SyllableHalf } from "./syllable-half";
 import { cn } from "@/lib/utils";
 
@@ -10,9 +10,9 @@ interface WordTargetProps {
   onComplete?: (word: string) => void;
   isCompleted?: boolean;
   connectedSyllables?: [string | null, string | null];
-  onSyllableConnect?: (index: number, syllable: string) => void;
   className?: string;
   disabled?: boolean;
+  wordId: string;
 }
 
 export function WordTarget({
@@ -21,27 +21,17 @@ export function WordTarget({
   onComplete,
   isCompleted = false,
   connectedSyllables = [null, null],
-  onSyllableConnect,
   className,
   disabled = false,
+  wordId,
 }: WordTargetProps) {
-  const handleSyllableDrop = (index: number, droppedText: string) => {
-    if (disabled || isCompleted) return;
-
-    // Verifica se a sílaba já foi usada em outro lugar
-    if (connectedSyllables.includes(droppedText)) return;
-
-    onSyllableConnect?.(index, droppedText);
-
-    // Verifica se completou a palavra após conectar
-    const newSyllables: [string | null, string | null] = [...connectedSyllables];
-    newSyllables[index] = droppedText;
-
-    if (newSyllables[0] && newSyllables[1]) {
-      const word = newSyllables.join("");
+  // Verifica automaticamente quando ambas as sílabas são conectadas
+  useEffect(() => {
+    if (connectedSyllables[0] && connectedSyllables[1]) {
+      const word = connectedSyllables.join("");
       const isValidPair =
-        (expectedPair[newSyllables[0]] === newSyllables[1]) ||
-        (expectedPair[newSyllables[1]] === newSyllables[0]);
+        (expectedPair[connectedSyllables[0]] === connectedSyllables[1]) ||
+        (expectedPair[connectedSyllables[1]] === connectedSyllables[0]);
 
       if (isValidPair) {
         setTimeout(() => {
@@ -49,7 +39,7 @@ export function WordTarget({
         }, 300);
       }
     }
-  };
+  }, [connectedSyllables, expectedPair, onComplete]);
 
   const getSyllableColor = (syllable: string) => {
     // Cores baseadas na primeira letra da sílaba
@@ -73,11 +63,10 @@ export function WordTarget({
         {[0, 1].map((index) => (
           <SyllableHalf
             key={index}
-            text={connectedSyllables[index] || `target-${index}`}
+            text={connectedSyllables[index] || `target-${wordId}-${index}`}
             color={connectedSyllables[index] ? getSyllableColor(connectedSyllables[index]) : undefined}
             isTarget
             isEmpty={!connectedSyllables[index]}
-            onDrop={(droppedText) => handleSyllableDrop(index, droppedText)}
             isMatched={isCompleted}
             disabled={disabled || isCompleted}
             className="drop-shadow-lg"

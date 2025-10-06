@@ -10,7 +10,6 @@ interface ColorBoardProps {
   label: string;
   color: string;
   shadowColor: string;
-  onDrop?: (itemId: string) => void;
   isComplete?: boolean;
   acceptedItems?: Array<{ id: string; nome: string; emoji: string }>;
   className?: string;
@@ -24,7 +23,6 @@ export function ColorBoard({
   label,
   color,
   shadowColor,
-  onDrop,
   isComplete = false,
   acceptedItems = [],
   className,

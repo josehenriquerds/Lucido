@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityHeader, ActivitySection } from "@/components/activities/activity-shell";
 import { useGame } from "@/components/game-provider";
 import { LetterTile } from "@/components/ui/letter-tile";
@@ -169,14 +169,6 @@ export function SpellingBeabaAdventure() {
 
   const handleCelebrationContinue = () => {
     setGameState("completed");
-  };
-
-  const getUsableLetters = () => {
-    return availableLetters.filter(letter => {
-      const letterCount = availableLetters.filter(l => l === letter).length;
-      const usedCount = Array.from(usedLetters).filter(l => l === letter).length;
-      return usedCount < letterCount;
-    });
   };
 
   if (gameState === "celebrating") {

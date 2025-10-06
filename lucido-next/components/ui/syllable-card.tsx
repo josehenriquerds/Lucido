@@ -1,7 +1,6 @@
 "use client";
 
 import { forwardRef } from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { getSyllableTheme } from "@/lib/letter-theme";
 
@@ -25,7 +24,6 @@ export const SyllableCard = forwardRef<HTMLButtonElement | HTMLDivElement, Sylla
       syllable,
       isPrimary = false,
       asButton = false,
-      showHelperImage = true,
       ariaLabel,
       className,
       onClick,

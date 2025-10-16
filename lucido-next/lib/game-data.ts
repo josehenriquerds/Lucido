@@ -36,7 +36,7 @@ U: [
   { emoji: "🦄", word: "Unicórnio" },
   { emoji: "🍇", word: "Uva" },
   { emoji: "🐻", word: "Urso" },
-  { emoji: "😮", word: "Uau" },, 
+  { emoji: "😮", word: "Uau" },
 ],
 } as const;
 

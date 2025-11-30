@@ -801,6 +801,13 @@ export function getActivityById(id: string): TherapeuticActivity | undefined {
   return MOCK_THERAPEUTIC_ACTIVITIES.find((a) => a.id === id);
 }
 
+export function getPatientsByGuardian(guardianUserId: string): Patient[] {
+  const patientIds = MOCK_PATIENT_GUARDIANS.filter((g) => g.userId === guardianUserId).map(
+    (g) => g.patientId
+  );
+  return MOCK_PATIENTS.filter((p) => patientIds.includes(p.id));
+}
+
 export function getPatientsByProfessional(professionalId: string): Patient[] {
   const patientIds = MOCK_CASE_PROFESSIONALS.filter(
     (cp) => cp.userId === professionalId && cp.isActive
@@ -817,6 +824,16 @@ export function getProfessionalsByPatient(patientId: string): (CaseProfessional 
       return { ...cp, user };
     })
     .filter((item): item is CaseProfessional & { user: User } => item !== null);
+}
+
+export function getGuardiansByPatient(patientId: string): (PatientGuardian & { user: User })[] {
+  return MOCK_PATIENT_GUARDIANS.filter((g) => g.patientId === patientId)
+    .map((guardian) => {
+      const user = getUserById(guardian.userId);
+      if (!user) return null;
+      return { ...guardian, user };
+    })
+    .filter((item): item is PatientGuardian & { user: User } => item !== null);
 }
 
 export function getSessionsByPatient(patientId: string): Session[] {

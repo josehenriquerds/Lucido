@@ -31,9 +31,11 @@ import {
   getUserById,
   getSessionById,
   getActivityById,
+  getPatientsByGuardian,
+  getGuardiansByPatient,
 } from "@/lib/clinical-data";
 
-import { ObjectiveStatus } from "@/lib/types/clinical";
+import { GlobalRole, ObjectiveStatus } from "@/lib/types/clinical";
 import { getSession, type AuthSession } from "@/lib/auth/auth-service";
 
 // ============================================================================
@@ -97,10 +99,16 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
       const user = getUserById(authSession.userId);
       setCurrentUser(user || null);
 
-      // Carregar pacientes do profissional
       if (user) {
-        const userPatients = getPatientsByProfessional(user.id);
-        setPatients(userPatients);
+        const professionalPatients = getPatientsByProfessional(user.id);
+        const guardianPatients =
+          user.globalRole === GlobalRole.GUARDIAN ? getPatientsByGuardian(user.id) : [];
+
+        const mergedPatients = [...professionalPatients, ...guardianPatients].filter(
+          (patient, index, self) => self.findIndex((p) => p.id === patient.id) === index
+        );
+
+        setPatients(mergedPatients);
       }
     }
   }, []);
@@ -118,7 +126,7 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
       if (!patient) return null;
 
       const activeProfessionals = getProfessionalsByPatient(patientId);
-      const guardians: PatientSummary["guardians"] = []; // TODO: implementar
+      const guardians = getGuardiansByPatient(patientId);
       const activeObjectives = getObjectivesByPatient(patientId).filter(
         (o) => o.status === ObjectiveStatus.IN_PROGRESS
       );

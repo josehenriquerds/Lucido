@@ -33,7 +33,7 @@ export default function GuardianLayout({ children }: { children: React.ReactNode
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-indigo-700">Lúcido Health</h1>
+                <h1 className="text-2xl font-bold text-indigo-700">NeuroBridge</h1>
                 <p className="text-sm font-medium text-gray-600">Portal do Responsável</p>
               </div>
 

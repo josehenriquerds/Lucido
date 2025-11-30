@@ -13,9 +13,9 @@ const roboto = Roboto({
 
 
 export const metadata: Metadata = {
-  title: "Ludico ",
-  description: "Trilha da alfebetização em um recife cheio de descobertas.",
-  applicationName: "Ludico",
+  title: "NeuroBridge",
+  description: "Plataforma colaborativa para acompanhamento multidisciplinar infantil.",
+  applicationName: "NeuroBridge",
   keywords: [
     "alfabetizaçao",
     "educação",

@@ -28,12 +28,12 @@ export default function ProfessionalLayout({ children }: { children: React.React
   };
 
   const navItems = [
-    { href: "/professional/dashboard", label: "Dashboard", icon: "📊" },
-    { href: "/professional/patients", label: "Pacientes", icon: "👥" },
-    { href: "/professional/requests", label: "Solicitações", icon: "🔗" },
-    { href: "/professional/chat", label: "Chat", icon: "💬" },
-    { href: "/professional/organizations", label: "Organização", icon: "🏥" },
-    { href: "/professional/profile-settings", label: "Configurações", icon: "⚙️" },
+    { href: "/professional/dashboard", label: "Dashboard" },
+    { href: "/professional/patients", label: "Pacientes" },
+    { href: "/professional/requests", label: "Solicitações" },
+    { href: "/professional/chat", label: "Chat" },
+    { href: "/professional/organizations", label: "Organização" },
+    { href: "/professional/profile-settings", label: "Configurações" },
   ];
 
   if (!session) {
@@ -43,7 +43,7 @@ export default function ProfessionalLayout({ children }: { children: React.React
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="border-b border-gray-200 p-6">
-        <h1 className="text-2xl font-bold text-blue-600">Lúcido</h1>
+        <h1 className="text-2xl font-bold text-blue-600">NeuroBridge</h1>
         <p className="text-xs text-gray-500">Área Profissional</p>
       </div>
 
@@ -71,7 +71,6 @@ export default function ProfessionalLayout({ children }: { children: React.React
                     isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
-                  <span>{item.icon}</span>
                   <span>{item.label}</span>
                 </Link>
               </li>

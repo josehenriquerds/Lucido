@@ -50,7 +50,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="rounded-3xl bg-white p-8 shadow-2xl">
           <div className="mb-8 text-center">
-            <h1 className="mb-2 text-3xl font-bold text-gray-800">Lúcido</h1>
+            <h1 className="mb-2 text-3xl font-bold text-gray-800">NeuroBridge</h1>
             <p className="text-sm text-gray-600">Prontuário Colaborativo</p>
           </div>
 

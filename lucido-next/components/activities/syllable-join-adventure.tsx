@@ -287,11 +287,11 @@ export function SyllableJoinAdventure() {
 
   const [currentRound, setCurrentRound] = useState<Array<typeof SYLLABLE_JOIN_WORDS[number]>>([]);
   const [completedWords, setCompletedWords] = useState<CompletedWord[]>([]);
-  const [usedWordIds, setUsedWordIds] = useState<Set<string>>(new Set());
 
   const [availableSyllables, setAvailableSyllables] = useState<SyllableInstance[]>([]);
   const [wordSlots, setWordSlots] = useState<Record<string, [SyllableInstance | null, SyllableInstance | null]>>({});
   const [usedSyllableIds, setUsedSyllableIds] = useState<Set<string>>(new Set());
+  const [, setUsedWordIds] = useState<Set<string>>(new Set());
 
   const [shakingWordId, setShakingWordId] = useState<string | null>(null);
   const [syllableConfetti, setSyllableConfetti] = useState(false);

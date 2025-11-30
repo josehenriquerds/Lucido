@@ -254,6 +254,16 @@ export interface TherapeuticActivity {
   updatedAt: Date;
 }
 
+export interface ActivityMetrics {
+  correctAnswers?: number;
+  totalQuestions?: number;
+  averageResponseTime?: number;
+  hintsUsed?: number;
+  syllablesFormed?: number;
+  totalAttempts?: number;
+  timeToComplete?: number;
+}
+
 export interface ActivityExecution {
   id: string;
   patientId: string;
@@ -265,7 +275,7 @@ export interface ActivityExecution {
   helpLevel?: HelpLevel;
   outcome?: ActivityOutcome;
   notes?: string;
-  metricsJson?: Record<string, unknown>; // Dados flexíveis de minigames
+  metricsJson?: ActivityMetrics; // Dados flexíveis de minigames
   createdAt: Date;
 }
 

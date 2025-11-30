@@ -1,8 +1,15 @@
 ﻿import type { Metadata } from "next";
+import { Roboto } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { CursorAssist } from "@/components/accessibility/cursor-assist";
 import "./globals.css";
 import "../styles/mobile-drag-drop.css";
+
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-roboto",
+});
 
 
 export const metadata: Metadata = {
@@ -26,7 +33,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className="h-full">
-      <body className="min-h-screen text-reef-shadow">
+      <body className={`min-h-screen text-reef-shadow ${roboto.variable}`}>
         <a
           href="#conteudo"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-bubble focus:bg-reef-sand focus:px-4 focus:py-2 focus:text-reef-shadow"

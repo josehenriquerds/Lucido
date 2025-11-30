@@ -25,7 +25,8 @@ export interface AuthSession {
 /**
  * Login com email e senha (mock - em produção, usar bcrypt e JWT)
  */
-export function login(email: string, password: string): AuthSession | null {
+export function login(email: string, _password: string): AuthSession | null {
+  void _password;
   const user = MOCK_USERS.find((u) => u.email === email);
 
   if (!user) {

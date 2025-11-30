@@ -12,32 +12,28 @@ import type {
   Objective,
   TherapeuticActivity,
   ActivityExecution,
-  Event,
   Comment,
   PatientSummary,
   TimelineEvent,
 } from "@/lib/types/clinical";
 
 import {
-  MOCK_PATIENTS,
   MOCK_SESSIONS,
   MOCK_OBJECTIVES,
   MOCK_THERAPEUTIC_ACTIVITIES,
   MOCK_ACTIVITY_EXECUTIONS,
-  MOCK_EVENTS,
   MOCK_COMMENTS,
   getPatientsByProfessional,
   getProfessionalsByPatient,
   getSessionsByPatient,
   getObjectivesByPatient,
   getEventsByPatient,
-  getCommentsBySession,
   getUserById,
   getSessionById,
   getActivityById,
 } from "@/lib/clinical-data";
 
-import { EventType, ObjectiveStatus } from "@/lib/types/clinical";
+import { ObjectiveStatus } from "@/lib/types/clinical";
 import { getSession, type AuthSession } from "@/lib/auth/auth-service";
 
 // ============================================================================
@@ -87,7 +83,7 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
   // Estados (em produção, viriam do backend)
   const [patients, setPatients] = useState<Patient[]>([]);
   const [sessions, setSessions] = useState<Session[]>(MOCK_SESSIONS);
-  const [objectives, setObjectives] = useState<Objective[]>(MOCK_OBJECTIVES);
+  const [objectives] = useState<Objective[]>(MOCK_OBJECTIVES);
   const [activities] = useState<TherapeuticActivity[]>(MOCK_THERAPEUTIC_ACTIVITIES);
   const [activityExecutions] = useState<ActivityExecution[]>(MOCK_ACTIVITY_EXECUTIONS);
   const [comments, setComments] = useState<Comment[]>(MOCK_COMMENTS);

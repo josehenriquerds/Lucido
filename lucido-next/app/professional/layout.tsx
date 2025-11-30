@@ -30,6 +30,7 @@ export default function ProfessionalLayout({ children }: { children: React.React
   const navItems = [
     { href: "/professional/dashboard", label: "Dashboard", icon: "📊" },
     { href: "/professional/patients", label: "Pacientes", icon: "👥" },
+    { href: "/professional/requests", label: "Solicitações", icon: "🔗" },
     { href: "/professional/chat", label: "Chat", icon: "💬" },
     { href: "/professional/organizations", label: "Organização", icon: "🏥" },
     { href: "/professional/profile-settings", label: "Configurações", icon: "⚙️" },

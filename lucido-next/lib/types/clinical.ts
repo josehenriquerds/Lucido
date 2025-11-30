@@ -182,6 +182,7 @@ export interface CaseProfessional {
   roleInCase: string; // ex: "Psicólogo", "Fonoaudiólogo"
   specialization?: string;
   isActive: boolean;
+  origin?: "FAMILY" | "ORGANIZATION" | "MARKETPLACE";
   startDate: Date;
   endDate?: Date;
 }
@@ -277,6 +278,42 @@ export interface ActivityExecution {
   notes?: string;
   metricsJson?: ActivityMetrics; // Dados flexíveis de minigames
   createdAt: Date;
+}
+
+// ----------------------------------------------------------------------------
+// REDE / MARKETPLACE
+// ----------------------------------------------------------------------------
+
+export interface ProfessionalProfile {
+  userId: string;
+  specialties: string[];
+  approaches?: string[];
+  city?: string;
+  state?: string;
+  modalities: Array<"ONLINE" | "IN_PERSON">;
+  ageRange?: string;
+  appearInMarketplace: boolean;
+}
+
+export enum LinkRequestOrigin {
+  FAMILY = "FAMILY",
+  ORGANIZATION = "ORGANIZATION",
+}
+
+export enum LinkRequestStatus {
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+}
+
+export interface LinkRequest {
+  id: string;
+  patientId: string;
+  professionalId: string;
+  origin: LinkRequestOrigin;
+  status: LinkRequestStatus;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // ----------------------------------------------------------------------------

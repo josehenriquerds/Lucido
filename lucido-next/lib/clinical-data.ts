@@ -16,6 +16,8 @@ import type {
   Comment,
   Event,
   Consent,
+  ProfessionalProfile,
+  LinkRequest,
 } from "./types/clinical";
 
 import {
@@ -35,6 +37,8 @@ import {
   ActivityOutcome,
   EventType,
   ConsentType,
+  LinkRequestOrigin,
+  LinkRequestStatus,
 } from "./types/clinical";
 
 // ============================================================================
@@ -250,6 +254,68 @@ export const MOCK_CASE_PROFESSIONALS: CaseProfessional[] = [
     specialization: "Terapia ABA",
     isActive: true,
     startDate: new Date("2024-04-05"),
+  },
+];
+
+// ----------------------------------------------------------------------------
+// PROFILES DE MARKETPLACE
+// ----------------------------------------------------------------------------
+
+export const MOCK_PROFESSIONAL_PROFILES: ProfessionalProfile[] = [
+  {
+    userId: "user-1",
+    specialties: ["Psicologia", "ABA"],
+    approaches: ["ABA", "DIR/Floortime"],
+    city: "São Paulo",
+    state: "SP",
+    modalities: ["ONLINE", "IN_PERSON"],
+    ageRange: "3-10 anos",
+    appearInMarketplace: true,
+  },
+  {
+    userId: "user-2",
+    specialties: ["Fonoaudiologia"],
+    approaches: ["Linguagem expressiva", "Comunicação alternativa"],
+    city: "São Paulo",
+    state: "SP",
+    modalities: ["ONLINE"],
+    ageRange: "2-8 anos",
+    appearInMarketplace: true,
+  },
+  {
+    userId: "user-7",
+    specialties: ["Fisioterapia"],
+    approaches: ["Integração sensorial"],
+    city: "Campinas",
+    state: "SP",
+    modalities: ["IN_PERSON"],
+    ageRange: "4-12 anos",
+    appearInMarketplace: true,
+  },
+];
+
+// ----------------------------------------------------------------------------
+// SOLICITAÇÕES DE VÍNCULO (GYMPASS)
+// ----------------------------------------------------------------------------
+
+export const MOCK_LINK_REQUESTS: LinkRequest[] = [
+  {
+    id: "lr-1",
+    patientId: "patient-1",
+    professionalId: "user-7",
+    origin: LinkRequestOrigin.FAMILY,
+    status: LinkRequestStatus.PENDING,
+    createdAt: new Date("2024-11-28"),
+    updatedAt: new Date("2024-11-28"),
+  },
+  {
+    id: "lr-2",
+    patientId: "patient-2",
+    professionalId: "user-2",
+    origin: LinkRequestOrigin.ORGANIZATION,
+    status: LinkRequestStatus.PENDING,
+    createdAt: new Date("2024-11-27"),
+    updatedAt: new Date("2024-11-27"),
   },
 ];
 
@@ -834,6 +900,10 @@ export function getGuardiansByPatient(patientId: string): (PatientGuardian & { u
       return { ...guardian, user };
     })
     .filter((item): item is PatientGuardian & { user: User } => item !== null);
+}
+
+export function getProfessionalProfile(userId: string) {
+  return MOCK_PROFESSIONAL_PROFILES.find((p) => p.userId === userId);
 }
 
 export function getSessionsByPatient(patientId: string): Session[] {

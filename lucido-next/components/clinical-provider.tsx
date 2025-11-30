@@ -15,6 +15,9 @@ import type {
   Comment,
   PatientSummary,
   TimelineEvent,
+  LinkRequest,
+  ProfessionalProfile,
+  CaseProfessional,
 } from "@/lib/types/clinical";
 
 import {
@@ -23,8 +26,6 @@ import {
   MOCK_THERAPEUTIC_ACTIVITIES,
   MOCK_ACTIVITY_EXECUTIONS,
   MOCK_COMMENTS,
-  getPatientsByProfessional,
-  getProfessionalsByPatient,
   getSessionsByPatient,
   getObjectivesByPatient,
   getEventsByPatient,
@@ -33,9 +34,13 @@ import {
   getActivityById,
   getPatientsByGuardian,
   getGuardiansByPatient,
+  getPatientById,
+  MOCK_CASE_PROFESSIONALS,
+  MOCK_PROFESSIONAL_PROFILES,
+  MOCK_LINK_REQUESTS,
 } from "@/lib/clinical-data";
 
-import { GlobalRole, ObjectiveStatus } from "@/lib/types/clinical";
+import { GlobalRole, ObjectiveStatus, LinkRequestOrigin, LinkRequestStatus } from "@/lib/types/clinical";
 import { getSession, type AuthSession } from "@/lib/auth/auth-service";
 
 // ============================================================================
@@ -70,6 +75,15 @@ interface ClinicalContextValue {
   // Comentários
   getCommentsBySession: (sessionId: string) => (Comment & { user: User })[];
   addComment: (sessionId: string, content: string) => void;
+
+  // Rede / Marketplace
+  linkRequests: LinkRequest[];
+  respondLinkRequest: (requestId: string, action: "ACCEPT" | "REJECT") => void;
+  addLinkRequest: (patientId: string, professionalId: string, origin: LinkRequestOrigin) => void;
+  getMarketplaceProfessionals: () => ProfessionalProfile[];
+  getProfessionalProfileByUserId: (userId: string) => ProfessionalProfile | undefined;
+  updateProfessionalProfile: (profile: ProfessionalProfile) => void;
+  getNetworkForPatient: (patientId: string) => (CaseProfessional & { user: User })[];
 }
 
 const ClinicalContext = createContext<ClinicalContextValue | null>(null);
@@ -89,6 +103,17 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
   const [activities] = useState<TherapeuticActivity[]>(MOCK_THERAPEUTIC_ACTIVITIES);
   const [activityExecutions] = useState<ActivityExecution[]>(MOCK_ACTIVITY_EXECUTIONS);
   const [comments, setComments] = useState<Comment[]>(MOCK_COMMENTS);
+  const [caseProfessionals, setCaseProfessionals] =
+    useState<(CaseProfessional & { user: User })[]>(() =>
+      MOCK_CASE_PROFESSIONALS.map((cp) => {
+        const user = getUserById(cp.userId);
+        if (!user) return null;
+        return { ...cp, user };
+      }).filter((item): item is CaseProfessional & { user: User } => item !== null)
+    );
+  const [professionalProfiles, setProfessionalProfiles] =
+    useState<ProfessionalProfile[]>(MOCK_PROFESSIONAL_PROFILES);
+  const [linkRequests, setLinkRequests] = useState<LinkRequest[]>(MOCK_LINK_REQUESTS);
 
   // Carregar sessão ao montar
   useEffect(() => {
@@ -100,7 +125,12 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
       setCurrentUser(user || null);
 
       if (user) {
-        const professionalPatients = getPatientsByProfessional(user.id);
+        const professionalPatients = caseProfessionals
+          .filter((cp) => cp.userId === user.id && cp.isActive)
+          .map((cp) => cp.patientId)
+          .map((id) => getPatientById(id))
+          .filter((p): p is Patient => Boolean(p));
+
         const guardianPatients =
           user.globalRole === GlobalRole.GUARDIAN ? getPatientsByGuardian(user.id) : [];
 
@@ -111,7 +141,7 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
         setPatients(mergedPatients);
       }
     }
-  }, []);
+  }, [caseProfessionals]);
 
   // ============================================================================
   // FUNÇÕES DE NEGÓCIO
@@ -125,7 +155,9 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
       const patient = patients.find((p) => p.id === patientId);
       if (!patient) return null;
 
-      const activeProfessionals = getProfessionalsByPatient(patientId);
+      const activeProfessionals = caseProfessionals.filter(
+        (cp) => cp.patientId === patientId && cp.isActive
+      );
       const guardians = getGuardiansByPatient(patientId);
       const activeObjectives = getObjectivesByPatient(patientId).filter(
         (o) => o.status === ObjectiveStatus.IN_PROGRESS
@@ -144,7 +176,7 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
         totalActivities,
       };
     },
-    [patients]
+    [patients, caseProfessionals]
   );
 
   /**
@@ -260,6 +292,99 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
     [comments]
   );
 
+  /**
+   * Rede e marketplace
+   */
+  const getNetworkForPatient = useCallback(
+    (patientId: string) => caseProfessionals.filter((cp) => cp.patientId === patientId),
+    [caseProfessionals]
+  );
+
+  const respondLinkRequest = useCallback(
+    (requestId: string, action: "ACCEPT" | "REJECT") => {
+      let acceptedRequest: LinkRequest | undefined;
+      setLinkRequests((prev) =>
+        prev.map((req) => {
+          if (req.id === requestId) {
+            const updated = {
+              ...req,
+              status: action === "ACCEPT" ? LinkRequestStatus.ACCEPTED : LinkRequestStatus.REJECTED,
+              updatedAt: new Date(),
+            };
+            acceptedRequest = updated;
+            return updated;
+          }
+          return req;
+        })
+      );
+
+      if (action === "ACCEPT" && acceptedRequest) {
+        const user = getUserById(acceptedRequest.professionalId);
+        const patient = getPatientById(acceptedRequest.patientId);
+        if (user && patient) {
+          setCaseProfessionals((prev) => [
+            ...prev,
+            {
+              id: `cp-${Date.now()}`,
+              patientId: patient.id,
+              userId: user.id,
+              user,
+              roleInCase: "Profissional da Rede",
+              isActive: true,
+              origin: acceptedRequest?.origin ?? LinkRequestOrigin.FAMILY,
+              startDate: new Date(),
+            },
+          ]);
+          setPatients((prev) => {
+            if (prev.find((p) => p.id === patient.id)) return prev;
+            return [...prev, patient];
+          });
+        }
+      }
+    },
+    []
+  );
+
+  const addLinkRequest = useCallback(
+    (patientId: string, professionalId: string, origin: LinkRequestOrigin) => {
+      setLinkRequests((prev) => [
+        ...prev,
+        {
+          id: `lr-${Date.now()}`,
+          patientId,
+          professionalId,
+          origin,
+          status: LinkRequestStatus.PENDING,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ]);
+    },
+    []
+  );
+
+  const getMarketplaceProfessionals = useCallback(() => {
+    return professionalProfiles.filter((p) => p.appearInMarketplace);
+  }, [professionalProfiles]);
+
+  const getProfessionalProfileByUserId = useCallback(
+    (userId: string) => professionalProfiles.find((p) => p.userId === userId),
+    [professionalProfiles]
+  );
+
+  const updateProfessionalProfile = useCallback(
+    (profile: ProfessionalProfile) => {
+      setProfessionalProfiles((prev) => {
+        const existing = prev.find((p) => p.userId === profile.userId);
+        if (existing) {
+          return prev.map((p) => (p.userId === profile.userId ? profile : p));
+        }
+        return [...prev, profile];
+      });
+    },
+    []
+  );
+
   // ============================================================================
   // VALOR DO CONTEXT
   // ============================================================================
@@ -279,6 +404,13 @@ export function ClinicalProvider({ children }: { children: React.ReactNode }) {
     getTimelineEvents,
     getCommentsBySession: getCommentsBySessionLocal,
     addComment,
+    linkRequests,
+    respondLinkRequest,
+    addLinkRequest,
+    getMarketplaceProfessionals,
+    getProfessionalProfileByUserId,
+    updateProfessionalProfile,
+    getNetworkForPatient,
   };
 
   return <ClinicalContext.Provider value={value}>{children}</ClinicalContext.Provider>;
